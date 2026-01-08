@@ -1,0 +1,219 @@
+====================================================================================================
+INTERPRETATION GUIDE: WHY SOME CORRELATIONS MATTER MORE
+====================================================================================================
+
+====================================================================================================
+1. STATISTICAL SIGNIFICANCE (P-Value)
+====================================================================================================
+
+The p-value tells us the probability that the observed correlation occurred by chance.
+
+Lower p-value = More confident the relationship is real
+
+Standard thresholds:
+  • p < 0.001 (***): Less than 0.1% chance this is random → HIGHLY RELIABLE
+  • p < 0.01  (**):  Less than 1% chance this is random → VERY RELIABLE
+  • p < 0.05  (*):   Less than 5% chance this is random → RELIABLE
+  • p ≥ 0.05  (ns):  More than 5% chance this is random → UNRELIABLE
+
+EXAMPLES FROM OUR DATA:
+
+Highly Significant (Trustworthy):
+  • Price Range (Volatility) ↔ Depression Index
+    r = 0.2745, p = 0.000000 ***
+    → This relationship is REAL (99.9%+ confidence)
+  • S&P 500 Volatility ↔ Depression Index
+    r = 0.2668, p = 0.000000 ***
+    → This relationship is REAL (99.9%+ confidence)
+  • S&P 500 Close ↔ Depression Index
+    r = 0.1436, p = 0.000725 ***
+    → This relationship is REAL (99.9%+ confidence)
+
+Not Significant (Cannot Trust):
+  • Price Range ↔ Depression Word Count
+    r = 0.0769, p = 0.0713 ns
+    → Could be random chance, don't rely on this
+  • S&P 500 Return ↔ Depression Word Count
+    r = -0.0721, p = 0.0907 ns
+    → Could be random chance, don't rely on this
+  • Rainfall ↔ Stock Close Price
+    r = -0.0289, p = 0.4980 ns
+    → Could be random chance, don't rely on this
+
+====================================================================================================
+2. EFFECT SIZE (Correlation Magnitude)
+====================================================================================================
+
+Even if statistically significant, is the effect large enough to matter?
+
+Cohen's guidelines for correlation strength:
+  • |r| < 0.10:  Negligible → Practically meaningless
+  • |r| 0.10-0.29: Small → Detectable but weak relationship
+  • |r| 0.30-0.49: Medium → Moderate, meaningful relationship
+  • |r| ≥ 0.50:  Large → Strong, important relationship
+
+EXAMPLES FROM OUR DATA:
+
+Small Effect (Detectable but Weak):
+  • Price Range (Volatility) ↔ Depression Index
+    r = 0.2745 (Small)
+    → Only explains 7.5% of variance
+  • S&P 500 Volatility ↔ Depression Index
+    r = 0.2668 (Small)
+    → Only explains 7.1% of variance
+  • S&P 500 Close ↔ Depression Index
+    r = 0.1436 (Small)
+    → Only explains 2.1% of variance
+
+Negligible Effect (Not Practically Meaningful):
+  • Price Range ↔ Depression Word Count
+    r = 0.0769 (Negligible)
+    → Explains only 0.6% of variance
+  • S&P 500 Return ↔ Depression Word Count
+    r = -0.0721 (Negligible)
+    → Explains only 0.5% of variance
+  • Rainfall ↔ Stock Close Price
+    r = -0.0289 (Negligible)
+    → Explains only 0.1% of variance
+
+====================================================================================================
+3. CONFIDENCE INTERVALS
+====================================================================================================
+
+95% Confidence Interval shows the range where true correlation likely falls.
+
+Narrow CI = Precise estimate
+Wide CI = Uncertain estimate
+CI containing 0 = Might be no relationship at all
+
+EXAMPLES:
+
+Precise Estimates (Narrow CI):
+  • Price Range (Volatility) ↔ Depression Index
+    r = 0.2745, 95% CI [0.1955, 0.3500]
+    → Precise estimate, narrow range
+  • S&P 500 Volatility ↔ Depression Index
+    r = 0.2668, 95% CI [0.1875, 0.3427]
+    → Precise estimate, narrow range
+
+Less Precise Estimates (Wide CI):
+  • Stock Low Price ↔ Depression Index
+    r = 0.1045, 95% CI [0.0212, 0.1864]
+    → More uncertainty, wide range
+  • Trading Volume ↔ Depression Index
+    r = 0.1104, 95% CI [0.0271, 0.1922]
+    → More uncertainty, wide range
+
+====================================================================================================
+4. SAMPLE SIZE (N)
+====================================================================================================
+
+Larger sample = More reliable results
+Smaller sample = Higher chance of false positives/negatives
+
+Our analysis has N = 551 for most correlations
+With N > 30, results are generally reliable if p < 0.05
+
+====================================================================================================
+5. MULTIPLE COMPARISON CORRECTION (Bonferroni)
+====================================================================================================
+
+We tested 17 correlations.
+With many tests, some will appear significant just by chance!
+
+Bonferroni correction: Adjusted α = 0.05/17 = 0.002941
+
+Only correlations surviving this stricter threshold are truly robust.
+
+Correlations that survive Bonferroni correction (3 total):
+  • Price Range (Volatility) ↔ Depression Index
+    r = 0.2745, adjusted p = 0.0000
+  • S&P 500 Volatility ↔ Depression Index
+    r = 0.2668, adjusted p = 0.0000
+  • S&P 500 Close ↔ Depression Index
+    r = 0.1436, adjusted p = 0.0123
+
+====================================================================================================
+CONCLUSION: RANKING CORRELATION IMPORTANCE
+====================================================================================================
+
+A correlation is MOST IMPORTANT when it has:
+  ✓ Low p-value (< 0.001 preferred)
+  ✓ Medium to large effect size (|r| > 0.30)
+  ✓ Narrow confidence interval
+  ✓ Large sample size (N > 100 preferred)
+  ✓ Survives multiple comparison correction
+
+====================================================================================================
+TOP CORRELATIONS BY IMPORTANCE (All Criteria Combined)
+====================================================================================================
+
+1. Price Range (Volatility) ↔ Depression Index
+   r = 0.2745 ***, p = 0.000000
+   Effect: Small, R² = 7.5%
+   95% CI: [0.1955, 0.3500], N = 551
+   Bonferroni: PASS
+   ★ Importance Score: 10/10
+
+2. S&P 500 Volatility ↔ Depression Index
+   r = 0.2668 ***, p = 0.000000
+   Effect: Small, R² = 7.1%
+   95% CI: [0.1875, 0.3427], N = 551
+   Bonferroni: PASS
+   ★ Importance Score: 10/10
+
+3. S&P 500 Close ↔ Depression Index
+   r = 0.1436 ***, p = 0.000725
+   Effect: Small, R² = 2.1%
+   95% CI: [0.0608, 0.2244], N = 551
+   Bonferroni: PASS
+   ★ Importance Score: 10/10
+
+4. Stock High Price ↔ Depression Index
+   r = 0.1205 **, p = 0.004609
+   Effect: Small, R² = 1.5%
+   95% CI: [0.0374, 0.2020], N = 551
+   Bonferroni: FAIL
+   ★ Importance Score: 5/10
+
+5. Stock Open Price ↔ Depression Index
+   r = 0.1141 **, p = 0.007363
+   Effect: Small, R² = 1.3%
+   95% CI: [0.0308, 0.1957], N = 551
+   Bonferroni: FAIL
+   ★ Importance Score: 5/10
+
+6. Stock Close Price ↔ Depression Index
+   r = 0.1106 **, p = 0.009340
+   Effect: Small, R² = 1.2%
+   95% CI: [0.0274, 0.1924], N = 551
+   Bonferroni: FAIL
+   ★ Importance Score: 5/10
+
+7. Trading Volume ↔ Depression Index
+   r = 0.1104 **, p = 0.009500
+   Effect: Small, R² = 1.2%
+   95% CI: [0.0271, 0.1922], N = 551
+   Bonferroni: FAIL
+   ★ Importance Score: 5/10
+
+8. Stock Low Price ↔ Depression Index
+   r = 0.1045 *, p = 0.014089
+   Effect: Small, R² = 1.1%
+   95% CI: [0.0212, 0.1864], N = 551
+   Bonferroni: FAIL
+   ★ Importance Score: 3/10
+
+9. Price Range ↔ Depression Word Count
+   r = 0.0769 ns, p = 0.071317
+   Effect: Negligible, R² = 0.6%
+   95% CI: [-0.0067, 0.1594], N = 551
+   Bonferroni: FAIL
+   ★ Importance Score: 1/10
+
+10. S&P 500 Return ↔ Depression Word Count
+   r = -0.0721 ns, p = 0.090739
+   Effect: Negligible, R² = 0.5%
+   95% CI: [-0.1547, 0.0115], N = 551
+   Bonferroni: FAIL
+   ★ Importance Score: 1/10

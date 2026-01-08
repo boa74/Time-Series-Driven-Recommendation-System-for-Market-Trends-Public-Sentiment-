@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large data (do NOT version)
+data/
+archive/
+
+# Data files
+*.csv
+*.parquet
+*.json
+
+# Logs
+*.log
+

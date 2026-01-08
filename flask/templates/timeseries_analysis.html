@@ -1,0 +1,926 @@
+{% extends "base.html" %}
+
+{% block title %}Time Series Analysis - Depression & Stock Market{% endblock %}
+
+{% block content %}
+<style>
+    .form-select {
+        border-radius: 8px;
+        border: 1px solid #e0e6ed;
+        padding: 0.75rem 1rem;
+    }
+    
+    .form-select:focus {
+        border-color: var(--columbia-blue-dark);
+        box-shadow: 0 0 0 3px rgba(117, 168, 200, 0.1);
+    }
+    
+    .btn-secondary {
+        background-color: #f8f9fa;
+        border: 1px solid #e0e6ed;
+        color: var(--columbia-dark);
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e9ecef;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--columbia-blue-dark);
+        border-color: var(--columbia-blue-dark);
+    }
+</style>
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" style="color: var(--columbia-blue-dark);">Home</a></li>
+                <li class="breadcrumb-item active">Time Series Analysis</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-2" style="color: var(--columbia-dark);">
+            <i class="fas fa-chart-line me-2"></i>Time Series Analysis
+        </h2>
+        <p class="text-muted">Correlation statistics & temporal trends between depression index and market variables</p>
+    </div>
+
+    <!-- Index Metrics (Same as Home) -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-cloud-rain fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                    <h6 class="text-uppercase text-muted mb-2">Rainfall</h6>
+                    <h2 class="fw-bold" style="color: var(--columbia-dark);" id="todayRainfall">--</h2>
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">mm</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-thermometer-half fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                    <h6 class="text-uppercase text-muted mb-2">Temperature</h6>
+                    <h2 class="fw-bold" style="color: var(--columbia-dark);" id="todayTemp">--</h2>
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">°C</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-brain fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                    <h6 class="text-uppercase text-muted mb-2">Depression Index</h6>
+                    <h2 class="fw-bold" style="color: var(--columbia-dark);" id="todayDepression">--</h2>
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">Score</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Time Series Charts -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <h5 class="fw-semibold" style="color: var(--columbia-dark);">
+                <i class="fas fa-mouse-pointer me-2"></i>Interactive Time Series Charts
+            </h5>
+            <p class="text-muted small">Hover over the charts to see detailed values</p>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-brain me-2"></i>Depression Index Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <div id="depressionChart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #75A8C8 0%, #5C9BB5 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-line me-2"></i>S&P 500 Close Price Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <div id="sp500Chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-cloud-rain me-2"></i>Rainfall Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <div id="rainfallChart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #75A8C8 0%, #5C9BB5 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-coins me-2"></i>Stock Close Price Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <div id="stockChart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Analysis: Company & Industry Prediction -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-filter me-2"></i>Advanced Analysis: Company & Industry Prediction</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Select a company to compare with up to 5 companies in the same industry, then view industry trends.</p>
+                    
+                    <!-- Step 1: Select Company -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Step 1: Select a Company</label>
+                        <select class="form-select" id="companySelect" onchange="loadIndustryCompanies()">
+                            <option value="">Choose a company...</option>
+                        </select>
+                        <div id="selectedCompanyInfo" style="margin-top: 0.5rem; padding: 0.75rem; background-color: #f8f9fa; border-radius: 6px; display: none;">
+                            <strong id="selectedCompanyName"></strong> - Industry: <span id="selectedIndustry"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Select Comparison Companies -->
+                    <div id="comparisonCompaniesSection" style="display: none; margin-bottom: 1.5rem;">
+                        <label class="form-label fw-semibold">Step 2: Select up to 5 companies to compare (same industry)</label>
+                        <div id="comparisonCompaniesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem;">
+                            <!-- Companies will be loaded here -->
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="compareCompanies()" style="margin-right: 0.75rem;">
+                                <i class="fas fa-chart-line me-2"></i>Compare Selected Companies
+                            </button>
+                            <button class="btn btn-secondary" onclick="viewIndustryTrends()">
+                                <i class="fas fa-industry me-2"></i>View Industry Trends
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Results -->
+    <div id="predictionResults" class="row mb-4" style="display: none;">
+        <!-- Results will be loaded here -->
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+let selectedTickers = [];
+let currentIndustry = '';
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadTodayData();
+    loadTimeSeriesData();
+    loadCompaniesList();
+});
+
+function loadTodayData() {
+    fetch('/api/today-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('API Error:', data.error);
+                return;
+            }
+            
+            document.getElementById('todayRainfall').textContent = data.rainfall.toFixed(1);
+            document.getElementById('todayTemp').textContent = data.temperature.toFixed(1);
+            document.getElementById('todayDepression').textContent = data.depression_index.toFixed(0);
+        })
+        .catch(error => {
+            console.error('Error loading today data:', error);
+        });
+}
+
+function loadCompaniesList() {
+    fetch('/api/companies-list')
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error loading companies:', data.error);
+                return;
+            }
+
+            const select = document.getElementById('companySelect');
+            data.companies.forEach(company => {
+                const option = document.createElement('option');
+                option.value = company.ticker;
+                option.textContent = `${company.company_name} (${company.ticker})`;
+                select.appendChild(option);
+            });
+        })
+        .catch(err => {
+            console.error('Error loading companies list:', err);
+        });
+}
+
+function loadIndustryCompanies() {
+    const ticker = document.getElementById('companySelect').value;
+    if (!ticker) {
+        document.getElementById('comparisonCompaniesSection').style.display = 'none';
+        document.getElementById('selectedCompanyInfo').style.display = 'none';
+        selectedTickers = [];
+        currentIndustry = '';
+        return;
+    }
+
+    fetch(`/api/companies-by-industry?ticker=${encodeURIComponent(ticker)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                alert(`Error: ${data.error}`);
+                return;
+            }
+
+            currentIndustry = data.industry;
+            document.getElementById('selectedCompanyName').textContent = data.selected_company.company_name;
+            document.getElementById('selectedIndustry').textContent = data.industry;
+            document.getElementById('selectedCompanyInfo').style.display = 'block';
+
+            const container = document.getElementById('comparisonCompaniesList');
+            container.innerHTML = '';
+            selectedTickers = [];
+
+            data.companies.forEach(company => {
+                if (company.ticker === ticker) return; // Skip selected company
+                
+                const checkbox = document.createElement('div');
+                checkbox.className = 'form-check';
+                checkbox.innerHTML = `
+                    <input class="form-check-input" type="checkbox" value="${company.ticker}" 
+                           onchange="updateSelectedTickers()" id="comp_${company.ticker}">
+                    <label class="form-check-label" for="comp_${company.ticker}">
+                        ${company.company_name} (${company.ticker})
+                    </label>
+                `;
+                container.appendChild(checkbox);
+            });
+
+            document.getElementById('comparisonCompaniesSection').style.display = 'block';
+        })
+        .catch(err => {
+            console.error('Error loading industry companies:', err);
+        });
+}
+
+function updateSelectedTickers() {
+    selectedTickers = Array.from(document.querySelectorAll('#comparisonCompaniesList input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+    
+    if (selectedTickers.length > 5) {
+        alert('Please select maximum 5 companies.');
+        event.target.checked = false;
+        selectedTickers = selectedTickers.filter(t => t !== event.target.value);
+    }
+}
+
+function compareCompanies() {
+    if (selectedTickers.length < 1) {
+        alert('Please select at least one company.');
+        return;
+    }
+
+    const ticker = document.getElementById('companySelect').value;
+    const allTickers = [ticker, ...selectedTickers];
+    const params = new URLSearchParams();
+    allTickers.forEach(t => params.append('tickers', t));
+
+    fetch(`/api/company-comparison?${params}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                alert(`Error: ${data.error}`);
+                return;
+            }
+
+            renderCompanyComparison(data);
+            document.getElementById('predictionResults').style.display = 'block';
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert(`Error: ${err.message}`);
+        });
+}
+
+function viewIndustryTrends() {
+    if (!currentIndustry) {
+        alert('Please select a company first.');
+        return;
+    }
+
+    fetch(`/api/industry-trends?industry=${encodeURIComponent(currentIndustry)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                alert(`Error: ${data.error}`);
+                return;
+            }
+
+            renderIndustryTrends(data);
+            document.getElementById('predictionResults').style.display = 'block';
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert(`Error: ${err.message}`);
+        });
+}
+
+function renderCompanyComparison(data) {
+    const resultsDiv = document.getElementById('predictionResults');
+    
+    let predictionsHTML = '';
+    if (data.predictions) {
+        Object.entries(data.predictions).forEach(([ticker, predData]) => {
+            const comp = data.companies.find(c => c.ticker === ticker);
+            if (comp && predData.predictions) {
+                predictionsHTML += `
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                                <h5 class="mb-0 fw-semibold"><i class="fas fa-building me-2"></i>${comp.company_name} (${ticker}) - 3-Week Prediction</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    ${['week1', 'week2', 'week3'].map(week => {
+                                        const weekPred = predData.predictions[week];
+                                        if (!weekPred) return '';
+                                        const trendClass = weekPred.trend === 'Bullish' ? 'text-success' : 
+                                                          (weekPred.trend === 'Bearish' ? 'text-danger' : 'text-warning');
+                                        return `
+                                            <div class="col-md-4 mb-3">
+                                                <div class="card">
+                                                    <div class="card-body text-center">
+                                                        <h6 class="text-muted">${week === 'week1' ? 'Week 1' : week === 'week2' ? 'Week 2' : 'Week 3'}</h6>
+                                                        <h3 class="${trendClass}">${weekPred.change > 0 ? '+' : ''}${weekPred.change.toFixed(2)}%</h3>
+                                                        <p class="text-muted mb-1">Predicted: $${weekPred.price.toFixed(2)}</p>
+                                                        <span class="badge ${weekPred.trend === 'Bullish' ? 'bg-success' : (weekPred.trend === 'Bearish' ? 'bg-danger' : 'bg-warning')}">${weekPred.trend}</span>
+                                                        ${weekPred.lag_impact !== undefined ? `<p class="text-muted mb-0 mt-2" style="font-size: 0.85rem;">Lag Impact: ${weekPred.lag_impact > 0 ? '+' : ''}${weekPred.lag_impact.toFixed(2)}%</p>` : ''}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                                
+                                <!-- Lag Effect Analysis -->
+                                ${predData.lag_effects ? `
+                                <div class="mb-3">
+                                    <h6 class="fw-semibold mb-2"><i class="fas fa-clock me-2"></i>Lag Effect Analysis (Depression & Rainfall Impact)</h6>
+                                    <div class="row">
+                                        ${['lag1', 'lag2', 'lag3'].map(lag => {
+                                            const lagData = predData.lag_effects[lag];
+                                            if (!lagData) return '';
+                                            return `
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h6 class="text-muted small mb-2">${lag === 'lag1' ? '1 Day' : lag === 'lag2' ? '2 Days' : '3 Days'} Lag</h6>
+                                                            <div style="font-size: 0.85rem;">
+                                                                <div>Depression: <strong>${lagData.depression_lag ? lagData.depression_lag.toFixed(1) : 'N/A'}</strong></div>
+                                                                <div>Rainfall: <strong>${lagData.rainfall_lag ? lagData.rainfall_lag.toFixed(1) : 'N/A'}mm</strong></div>
+                                                                ${lagData.depression_correlation !== undefined ? `<div>Dep Corr: <strong>${lagData.depression_correlation.toFixed(3)}</strong></div>` : ''}
+                                                                ${lagData.rainfall_correlation !== undefined ? `<div>Rain Corr: <strong>${lagData.rainfall_correlation.toFixed(3)}</strong></div>` : ''}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                <div id="predictionChart_${ticker}" style="height: 400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    }
+    
+    resultsDiv.innerHTML = `
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-bar me-2"></i>Company Comparison: ${data.industry}</h5>
+                </div>
+                <div class="card-body">
+                    <div id="comparisonChart" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+        ${predictionsHTML}
+    `;
+
+    // Render comparison chart
+    const traces = [];
+    const colors = ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6', '#1abc9c'];
+    
+    // Historical data
+    Object.entries(data.timeseries).forEach(([ticker, tsData], idx) => {
+        traces.push({
+            x: tsData.dates,
+            y: tsData.close_prices,
+            type: 'scatter',
+            mode: 'lines',
+            name: `${ticker} - ${tsData.company_name}`,
+            line: { color: colors[idx % colors.length], width: 2.5 }
+        });
+        
+        // Add prediction lines if available
+        if (data.predictions && data.predictions[ticker] && data.predictions[ticker].predictions) {
+            const pred = data.predictions[ticker];
+            const lastDate = tsData.dates[tsData.dates.length - 1];
+            const lastPrice = tsData.close_prices[tsData.close_prices.length - 1];
+            
+            // Calculate future dates (assuming 7 days per week)
+            const lastDateObj = new Date(lastDate);
+            const week1Date = new Date(lastDateObj);
+            week1Date.setDate(week1Date.getDate() + 7);
+            const week2Date = new Date(lastDateObj);
+            week2Date.setDate(week2Date.getDate() + 14);
+            const week3Date = new Date(lastDateObj);
+            week3Date.setDate(week3Date.getDate() + 21);
+            
+            const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                              week2Date.toISOString().split('T')[0], 
+                              week3Date.toISOString().split('T')[0]];
+            const predPrices = [lastPrice, pred.predictions.week1.price, 
+                               pred.predictions.week2.price, 
+                               pred.predictions.week3.price];
+            
+            traces.push({
+                x: predDates,
+                y: predPrices,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: `${ticker} - Prediction`,
+                line: { color: colors[idx % colors.length], width: 2, dash: 'dash' },
+                marker: { size: 8 }
+            });
+        }
+    });
+
+    const layout = {
+        title: {
+            text: 'Company Price Comparison with 3-Week Predictions',
+            font: { size: 16, color: '#2c3e50', family: 'Inter' }
+        },
+        xaxis: {
+            title: 'Date',
+            showgrid: true,
+            gridcolor: '#e0e6ed',
+            tickfont: { size: 10 }
+        },
+        yaxis: {
+            title: 'Close Price ($)',
+            showgrid: true,
+            gridcolor: '#e0e6ed',
+            tickfont: { size: 10 }
+        },
+        plot_bgcolor: '#f8f9fa',
+        paper_bgcolor: 'white',
+        font: { family: 'Inter', color: '#2c3e50' },
+        margin: { l: 80, r: 50, t: 60, b: 80 },
+        showlegend: true,
+        legend: { x: 0.02, y: 0.98, xanchor: 'left', yanchor: 'top' }
+    };
+
+    Plotly.newPlot('comparisonChart', traces, layout, { responsive: true });
+    
+    // Render individual prediction charts for each company
+    if (data.predictions) {
+        Object.entries(data.predictions).forEach(([ticker, predData]) => {
+            if (predData.predictions && data.timeseries[ticker]) {
+                const renderCompanyChart = () => {
+                    const chartElement = document.getElementById(`predictionChart_${ticker}`);
+                    if (!chartElement) {
+                        setTimeout(renderCompanyChart, 50);
+                        return;
+                    }
+                    
+                    const tsData = data.timeseries[ticker];
+                    const lastDate = tsData.dates[tsData.dates.length - 1];
+                    const lastPrice = tsData.close_prices[tsData.close_prices.length - 1];
+                    
+                    // Historical + prediction dates
+                    const lastDateObj = new Date(lastDate);
+                    const week1Date = new Date(lastDateObj);
+                    week1Date.setDate(week1Date.getDate() + 7);
+                    const week2Date = new Date(lastDateObj);
+                    week2Date.setDate(week2Date.getDate() + 14);
+                    const week3Date = new Date(lastDateObj);
+                    week3Date.setDate(week3Date.getDate() + 21);
+                    
+                    const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                                      week2Date.toISOString().split('T')[0], 
+                                      week3Date.toISOString().split('T')[0]];
+                    const predPrices = [lastPrice, predData.predictions.week1.price, 
+                                       predData.predictions.week2.price, 
+                                       predData.predictions.week3.price];
+                    
+                    const trace = {
+                        x: predDates,
+                        y: predPrices,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: 'Predicted Price',
+                        line: { color: '#3498db', width: 3 },
+                        marker: { size: 10, color: '#3498db' }
+                    };
+                    
+                    const predLayout = {
+                        title: {
+                            text: `${ticker} - 3-Week Prediction`,
+                            font: { size: 14, color: '#2c3e50', family: 'Inter' }
+                        },
+                        xaxis: {
+                            title: 'Date',
+                            showgrid: true,
+                            gridcolor: '#e0e6ed',
+                            tickfont: { size: 10 }
+                        },
+                        yaxis: {
+                            title: 'Price ($)',
+                            showgrid: true,
+                            gridcolor: '#e0e6ed',
+                            tickfont: { size: 10 }
+                        },
+                        plot_bgcolor: '#f8f9fa',
+                        paper_bgcolor: 'white',
+                        font: { family: 'Inter', color: '#2c3e50' },
+                        margin: { l: 80, r: 50, t: 50, b: 80 },
+                        showlegend: false
+                    };
+                    
+                    try {
+                        Plotly.newPlot(`predictionChart_${ticker}`, [trace], predLayout, { responsive: true });
+                    } catch (error) {
+                        console.error(`Error rendering chart for ${ticker}:`, error);
+                    }
+                };
+                
+                setTimeout(renderCompanyChart, 200);
+            }
+        });
+    }
+}
+
+function renderIndustryTrends(data) {
+    const resultsDiv = document.getElementById('predictionResults');
+    
+    let predictionsHTML = '';
+    if (data.predictions && data.predictions.predictions) {
+        predictionsHTML = `
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                        <h5 class="mb-0 fw-semibold"><i class="fas fa-crystal-ball me-2"></i>3-Week Industry Prediction</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            ${['week1', 'week2', 'week3'].map(week => {
+                                const weekPred = data.predictions.predictions[week];
+                                if (!weekPred) return '';
+                                const trendClass = weekPred.trend === 'Bullish' ? 'text-success' : 
+                                                  (weekPred.trend === 'Bearish' ? 'text-danger' : 'text-warning');
+                                return `
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card">
+                                            <div class="card-body text-center">
+                                                <h6 class="text-muted">${week === 'week1' ? 'Week 1' : week === 'week2' ? 'Week 2' : 'Week 3'}</h6>
+                                                <h3 class="${trendClass}">${weekPred.change > 0 ? '+' : ''}${weekPred.change.toFixed(2)}%</h3>
+                                                <p class="text-muted mb-1">Predicted: $${weekPred.price.toFixed(2)}</p>
+                                                <span class="badge ${weekPred.trend === 'Bullish' ? 'bg-success' : (weekPred.trend === 'Bearish' ? 'bg-danger' : 'bg-warning')}">${weekPred.trend}</span>
+                                                ${weekPred.lag_impact !== undefined ? `<p class="text-muted mb-0 mt-2" style="font-size: 0.85rem;">Lag Impact: ${weekPred.lag_impact > 0 ? '+' : ''}${weekPred.lag_impact.toFixed(2)}%</p>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div id="industryPredictionChart" style="height: 400px;"></div>
+                        
+                        <!-- Lag Effect Analysis -->
+                        ${data.predictions.lag_effects ? `
+                        <div class="mt-4">
+                            <h6 class="fw-semibold mb-3"><i class="fas fa-clock me-2"></i>Lag Effect Analysis (Depression & Rainfall Impact)</h6>
+                            <div class="row">
+                                ${['lag1', 'lag2', 'lag3'].map(lag => {
+                                    const lagData = data.predictions.lag_effects[lag];
+                                    if (!lagData) return '';
+                                    return `
+                                        <div class="col-md-4 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="text-muted small mb-2">${lag === 'lag1' ? '1 Day' : lag === 'lag2' ? '2 Days' : '3 Days'} Lag</h6>
+                                                    <div style="font-size: 0.85rem;">
+                                                        <div>Depression: <strong>${lagData.depression_lag ? lagData.depression_lag.toFixed(1) : 'N/A'}</strong></div>
+                                                        <div>Rainfall: <strong>${lagData.rainfall_lag ? lagData.rainfall_lag.toFixed(1) : 'N/A'}mm</strong></div>
+                                                        ${lagData.depression_correlation !== undefined ? `<div>Dep Corr: <strong>${lagData.depression_correlation.toFixed(3)}</strong></div>` : ''}
+                                                        ${lagData.rainfall_correlation !== undefined ? `<div>Rain Corr: <strong>${lagData.rainfall_correlation.toFixed(3)}</strong></div>` : ''}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    resultsDiv.innerHTML = `
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-industry me-2"></i>Industry Trends: ${data.industry}</h5>
+                </div>
+                <div class="card-body">
+                    <div id="industryTrendChart" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+        ${predictionsHTML}
+    `;
+
+    // Render industry trend chart
+    const trace1 = {
+        x: data.timeseries.dates,
+        y: data.timeseries.close_prices,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Average Close Price',
+        line: { color: '#3498db', width: 2.5 }
+    };
+
+    const trace2 = {
+        x: data.timeseries.dates,
+        y: data.timeseries.returns,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Returns (%)',
+        line: { color: '#27ae60', width: 2 },
+        yaxis: 'y2'
+    };
+
+    const traces = [trace1, trace2];
+    if (data.predictions && data.predictions.predictions) {
+        const pred = data.predictions;
+        const lastDate = data.timeseries.dates[data.timeseries.dates.length - 1];
+        const lastPrice = data.timeseries.close_prices[data.timeseries.close_prices.length - 1];
+        
+        const lastDateObj = new Date(lastDate);
+        const week1Date = new Date(lastDateObj);
+        week1Date.setDate(week1Date.getDate() + 7);
+        const week2Date = new Date(lastDateObj);
+        week2Date.setDate(week2Date.getDate() + 14);
+        const week3Date = new Date(lastDateObj);
+        week3Date.setDate(week3Date.getDate() + 21);
+        
+        const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                          week2Date.toISOString().split('T')[0], 
+                          week3Date.toISOString().split('T')[0]];
+        const predPrices = [lastPrice, pred.predictions.week1.price, 
+                           pred.predictions.week2.price, 
+                           pred.predictions.week3.price];
+        
+        traces.push({
+            x: predDates,
+            y: predPrices,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: '3-Week Prediction',
+            line: { color: '#e74c3c', width: 3, dash: 'dash' },
+            marker: { size: 10, color: '#e74c3c' }
+        });
+    }
+
+    const layout = {
+        title: 'Industry Trends Analysis',
+        xaxis: { title: 'Date' },
+        yaxis: { title: 'Average Close Price ($)' },
+        yaxis2: {
+            title: 'Returns (%)',
+            overlaying: 'y',
+            side: 'right'
+        },
+        plot_bgcolor: '#f8f9fa',
+        paper_bgcolor: 'white'
+    };
+
+    Plotly.newPlot('industryTrendChart', traces, layout, { responsive: true });
+    
+    // Render prediction chart if available
+    if (data.predictions && data.predictions.predictions) {
+        // Use a function to render the prediction chart after DOM is ready
+        const renderPredictionChart = () => {
+            const chartElement = document.getElementById('industryPredictionChart');
+            if (!chartElement) {
+                // If element not found, try again after a short delay
+                setTimeout(renderPredictionChart, 50);
+                return;
+            }
+            
+            const pred = data.predictions;
+            const lastDate = data.timeseries.dates[data.timeseries.dates.length - 1];
+            const lastPrice = data.timeseries.close_prices[data.timeseries.close_prices.length - 1];
+            
+            const lastDateObj = new Date(lastDate);
+            const week1Date = new Date(lastDateObj);
+            week1Date.setDate(week1Date.getDate() + 7);
+            const week2Date = new Date(lastDateObj);
+            week2Date.setDate(week2Date.getDate() + 14);
+            const week3Date = new Date(lastDateObj);
+            week3Date.setDate(week3Date.getDate() + 21);
+            
+            const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                              week2Date.toISOString().split('T')[0], 
+                              week3Date.toISOString().split('T')[0]];
+            const predPrices = [lastPrice, pred.predictions.week1.price, 
+                               pred.predictions.week2.price, 
+                               pred.predictions.week3.price];
+            
+            console.log('Rendering prediction chart with dates:', predDates);
+            console.log('Rendering prediction chart with prices:', predPrices);
+            
+            const predTrace = {
+                x: predDates,
+                y: predPrices,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Predicted Price',
+                line: { color: '#e74c3c', width: 3 },
+                marker: { size: 10, color: '#e74c3c' }
+            };
+            
+            const predLayout = {
+                title: {
+                    text: '3-Week Industry Prediction (Based on Lag Analysis)',
+                    font: { size: 16, color: '#2c3e50', family: 'Inter' }
+                },
+                xaxis: {
+                    title: 'Date',
+                    showgrid: true,
+                    gridcolor: '#e0e6ed',
+                    tickfont: { size: 10 }
+                },
+                yaxis: {
+                    title: 'Average Price ($)',
+                    showgrid: true,
+                    gridcolor: '#e0e6ed',
+                    tickfont: { size: 10 }
+                },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter', color: '#2c3e50' },
+                margin: { l: 80, r: 50, t: 60, b: 80 },
+                showlegend: false
+            };
+            
+            try {
+                Plotly.newPlot('industryPredictionChart', [predTrace], predLayout, { responsive: true });
+                console.log('Prediction chart rendered successfully');
+            } catch (error) {
+                console.error('Error rendering prediction chart:', error);
+            }
+        };
+        
+        // Start trying to render the chart
+        setTimeout(renderPredictionChart, 200);
+    }
+}
+
+function loadTimeSeriesData() {
+    fetch('/api/timeseries-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('API Error:', data.error);
+                return;
+            }
+            
+            // Depression Index Chart
+            const depressionTrace = {
+                x: data.dates,
+                y: data.depression_index,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Depression Index',
+                line: { color: '#75A8C8', width: 2 },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(117, 168, 200, 0.2)'
+            };
+            
+            const depressionLayout = {
+                xaxis: { title: 'Date', gridcolor: '#e8f4f8' },
+                yaxis: { title: 'Depression Index', gridcolor: '#e8f4f8' },
+                margin: { t: 20, r: 20, l: 60, b: 60 },
+                hovermode: 'x unified',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('depressionChart', [depressionTrace], depressionLayout, {responsive: true});
+            
+            // S&P 500 Chart
+            const sp500Trace = {
+                x: data.dates,
+                y: data.sp500_close,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'S&P 500',
+                line: { color: '#5C9BB5', width: 2 }
+            };
+            
+            const sp500Layout = {
+                xaxis: { title: 'Date', gridcolor: '#e8f4f8' },
+                yaxis: { title: 'Close Price ($)', gridcolor: '#e8f4f8' },
+                margin: { t: 20, r: 20, l: 60, b: 60 },
+                hovermode: 'x unified',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('sp500Chart', [sp500Trace], sp500Layout, {responsive: true});
+            
+            // Rainfall Chart
+            const rainfallTrace = {
+                x: data.dates,
+                y: data.rainfall,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Rainfall',
+                line: { color: '#75A8C8', width: 2 },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(117, 168, 200, 0.2)'
+            };
+            
+            const rainfallLayout = {
+                xaxis: { title: 'Date', gridcolor: '#e8f4f8' },
+                yaxis: { title: 'Rainfall (mm)', gridcolor: '#e8f4f8' },
+                margin: { t: 20, r: 20, l: 60, b: 60 },
+                hovermode: 'x unified',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('rainfallChart', [rainfallTrace], rainfallLayout, {responsive: true});
+            
+            // Stock Chart
+            const stockTrace = {
+                x: data.dates,
+                y: data.stock_close,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Stock Close',
+                line: { color: '#5C9BB5', width: 2 }
+            };
+            
+            const stockLayout = {
+                xaxis: { title: 'Date', gridcolor: '#e8f4f8' },
+                yaxis: { title: 'Close Price ($)', gridcolor: '#e8f4f8' },
+                margin: { t: 20, r: 20, l: 60, b: 60 },
+                hovermode: 'x unified',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('stockChart', [stockTrace], stockLayout, {responsive: true});
+        })
+        .catch(error => {
+            console.error('Error loading time series data:', error);
+        });
+}
+</script>
+{% endblock %}

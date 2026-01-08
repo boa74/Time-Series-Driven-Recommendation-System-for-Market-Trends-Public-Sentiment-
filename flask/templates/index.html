@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Analytics Dashboard</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #3498db;
+            --accent-hover: #2980b9;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --text-main: #2c3e50;
+            --text-muted: #6c757d;
+            --border: #e0e6ed;
+            --header-height: 70px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: #ffffff;
+            height: var(--header-height);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .brand h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+            background-color: var(--light);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: var(--header-height);
+            padding: 2rem;
+            max-width: 1800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Hero Section */
+        .hero-container {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 4rem 3rem;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .hero-bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0 0 1rem 0;
+            line-height: 1.2;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+            max-width: 600px;
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .metric-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        /* Content Section */
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+        
+        .content-section h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        /* Stat Grid */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: white;
+            transition: all 0.2s;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* Prediction Cards */
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .prediction-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+        
+        .prediction-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .prediction-header {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .prediction-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .prediction-value.positive {
+            color: var(--success);
+        }
+        
+        .prediction-value.negative {
+            color: var(--danger);
+        }
+        
+        .prediction-value.neutral {
+            color: var(--warning);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-success {
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--success);
+        }
+        
+        .badge-danger {
+            background: rgba(231, 76, 60, 0.15);
+            color: var(--danger);
+        }
+        
+        .badge-warning {
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--warning);
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Hidden by default */
+        .hidden {
+            display: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-description {
+                margin: 0 auto 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="header-content">
+            <div class="brand">
+                <i class="fas fa-chart-line" style="font-size: 1.5rem; color: var(--accent);"></i>
+                <h1>Stock Analytics</h1>
+            </div>
+            <nav class="header-nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/timeseries-analysis" class="nav-link">Time Series</a>
+                <a href="/industry-impact" class="nav-link">Industry</a>
+                <a href="/mongo-query" class="nav-link">MongoDB</a>
+                <a href="/postgres-query" class="nav-link">PostgreSQL</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <div class="hero-container">
+            <div class="hero-bg-pattern"></div>
+            <div class="hero-content">
+                <div>
+                    <h1 class="hero-title">Advanced Stock Market Analytics</h1>
+                    <p class="hero-description">
+                        Weather-Based Stock Prediction & Depression Index Correlation Analysis Dashboard
+                    </p>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Rainfall</div>
+                        <div class="metric-value" id="todayRainfall">--</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">mm</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Temperature</div>
+                        <div class="metric-value" id="todayTemp">--</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">°C</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Depression Index</div>
+                        <div class="metric-value" id="todayDepression">--</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">Score</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Industry Performance by Depression Index -->
+        <div class="content-section">
+            <h2><i class="fas fa-brain" style="margin-right: 0.5rem;"></i>Today's Depression Index Impact on Industries</h2>
+            
+            <!-- Key Insights Summary -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 12px; color: white; margin-bottom: 2rem; box-shadow: var(--shadow-md);">
+                <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: white;">
+                    <i class="fas fa-lightbulb" style="margin-right: 0.5rem;"></i>Key Finding
+                </h3>
+                <p style="font-size: 1.1rem; margin-bottom: 1rem; font-weight: 600;">
+                    Market volatility increases with depression sentiment (r = 0.274, p &lt; 0.001)
+                </p>
+                <p style="font-size: 0.95rem; opacity: 0.95; margin-bottom: 1.5rem;">
+                    Depression affects market uncertainty more than price direction. When depression index rises, expect higher price swings and volatility, not necessarily price declines.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 8px;">
+                        <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.5rem;">Price Volatility Correlation</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">0.274</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">Explains 7.5% of variance</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 8px;">
+                        <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.5rem;">S&P 500 Volatility Correlation</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">0.267</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">Explains 7.1% of variance</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 8px;">
+                        <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.5rem;">Statistical Significance</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">p &lt; 0.001</div>
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">Highly reliable</div>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Based on current depression index score, see how different industries typically perform. Red line shows today's level.</p>
+            
+            <div class="chart-container" style="margin: 0;">
+                <div id="industryPatternChart" style="height: 450px;"></div>
+            </div>
+            
+            <!-- Industry Sensitivity Ranking -->
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--primary);">
+                    <i class="fas fa-sort-amount-down" style="margin-right: 0.5rem;"></i>Industry Sensitivity to Depression Index
+                </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="content-section" style="margin: 0;">
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--danger);">
+                            <i class="fas fa-arrow-down" style="margin-right: 0.5rem;"></i>Most Impacted Industries
+                        </h4>
+                        <div id="mostImpactedIndustries" style="min-height: 200px;">
+                            <p style="color: var(--text-muted);">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="content-section" style="margin: 0;">
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--success);">
+                            <i class="fas fa-shield-alt" style="margin-right: 0.5rem;"></i>Least Impacted Industries
+                        </h4>
+                        <div id="leastImpactedIndustries" style="min-height: 200px;">
+                            <p style="color: var(--text-muted);">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                <div class="stat-card">
+                    <div class="stat-label">Today's Depression Index</div>
+                    <div class="stat-value" id="currentDepressionIndex" style="color: var(--warning);">--</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;" id="depressionCategory">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Market Sentiment</div>
+                    <div class="stat-value" id="marketSentiment" style="color: var(--accent);">--</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">Based on historical patterns</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Best Performing Sector</div>
+                    <div class="stat-value" id="bestSector" style="color: var(--success);">--</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;" id="bestSectorReturn">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Most Volatile Sector</div>
+                    <div class="stat-value" id="volatileSector" style="color: var(--danger);">--</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;" id="volatileSectorRisk">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Industry Patterns Analysis -->
+        <div class="content-section">
+            <h2><i class="fas fa-chart-bar" style="margin-right: 0.5rem;"></i>Industry Patterns Analysis with Volatility Prediction</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                Comprehensive industry analysis showing performance patterns and volatility predictions based on today's depression index threshold (<span id="thresholdValue" style="font-weight: 600; color: var(--danger);">--</span>). 
+                Red dashed lines indicate threshold-based volatility predictions.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <div class="chart-container" style="margin: 0;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--primary);">Top 15 Industries by Average Price Performance</h3>
+                    <div id="chart1" style="height: 500px; width: 100%;"></div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem; padding: 1rem; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--accent);">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--accent);"></i>
+                        <strong>Description:</strong> Shows the average price change percentage for each industry. Green bars indicate positive returns (price increase), while red bars indicate negative returns (price decrease). 
+                        The top 15 industries are sorted by performance, allowing you to identify which industries showed the best results.
+                    </p>
+                </div>
+                
+                <div class="chart-container" style="margin: 0;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--primary);">Sector Performance</h3>
+                    <div id="chart2" style="height: 400px; width: 100%;"></div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem; padding: 1rem; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--accent);">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--accent);"></i>
+                        <strong>Description:</strong> Compares the average price change percentage across different sectors. Sectors are broader categories that encompass multiple industries. 
+                        This chart helps identify which sectors performed well overall and which sectors underperformed.
+                    </p>
+                </div>
+                
+                <div class="chart-container" style="margin: 0;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--primary);">Industries: Correlation with Depression Index</h3>
+                    <div id="chart3" style="height: 600px; width: 100%;"></div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem; padding: 1rem; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--accent);">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--accent);"></i>
+                        <strong>Description:</strong> Shows the correlation between each industry's stock performance and the Depression Index. 
+                        Blue bars indicate positive correlation (higher depression index associated with stock price increase), while red bars indicate negative correlation (higher depression index associated with stock price decrease). 
+                        Correlation values closer to zero indicate less influence from the depression index.
+                    </p>
+                </div>
+                
+                <div class="chart-container" style="margin: 0;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--primary);">Top 5 Sectors: Average Close Price Over Time</h3>
+                    <div id="chart4" style="height: 500px; width: 100%;"></div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem; padding: 1rem; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--accent);">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--accent);"></i>
+                        <strong>Description:</strong> Displays the average closing price trends over time for the top 5 sectors by trading volume. 
+                        Each line represents a different sector, showing price movement patterns and trends over time. 
+                        This allows you to identify which sectors have grown long-term and assess their volatility levels.
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary);">
+                    <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i>Volatility Predictions by Industry
+                </h3>
+                <div id="volatilityPredictions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                    <p style="color: var(--text-muted);">Loading volatility predictions...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="content-section">
+            <div style="display:flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                <h2 style="margin: 0;"><i class="fas fa-lightbulb" style="margin-right: 0.5rem;"></i>Recommendations: Low-Impact Industries & Companies</h2>
+                <div>
+                    <button class="btn btn-secondary" onclick="loadRecommendations()" title="Refresh recommendations">
+                        <i class="fas fa-rotate"></i>
+                    </button>
+                </div>
+            </div>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Based on lag analysis of depression index and rainfall, combined with market sensitivity and volatility. Lower score = less impacted.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div class="content-section" style="margin:0;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+                        <i class="fas fa-industry" style="margin-right: 0.5rem;"></i>Top 4 Industries
+                    </h3>
+                    <div id="recIndustries">
+                        <p style="color: var(--text-muted);">Loading...</p>
+                    </div>
+                </div>
+                <div class="content-section" style="margin:0;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+                        <i class="fas fa-building" style="margin-right: 0.5rem;"></i>Top 20 Companies
+                    </h3>
+                    <div id="recCompanies">
+                        <p style="color: var(--text-muted);">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTodayData();
+        loadRecommendations();
+        loadIndustryPatterns();
+        loadDetailedIndustryPatterns();
+        loadCompaniesList();
+    });
+
+    function loadCompaniesList() {
+        fetch('/api/companies-list')
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error loading companies:', data.error);
+                    return;
+                }
+
+                const select = document.getElementById('companySelect');
+                data.companies.forEach(company => {
+                    const option = document.createElement('option');
+                    option.value = company.ticker;
+                    option.textContent = `${company.company_name} (${company.ticker})`;
+                    select.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error('Error loading companies list:', err);
+            });
+    }
+
+    function loadTodayData() {
+        fetch('/api/today-data')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('API Error:', data.error);
+                    return;
+                }
+                
+                document.getElementById('todayRainfall').textContent = data.rainfall.toFixed(1);
+                document.getElementById('todayTemp').textContent = data.temperature.toFixed(1);
+                document.getElementById('todayDepression').textContent = data.depression_index.toFixed(0);
+                
+                // Update depression index display
+                document.getElementById('currentDepressionIndex').textContent = data.depression_index.toFixed(0);
+                
+                // Categorize depression level
+                let category = '';
+                let sentiment = '';
+                if (data.depression_index < 60) {
+                    category = 'Low Depression';
+                    sentiment = 'Bullish';
+                } else if (data.depression_index < 80) {
+                    category = 'Medium Depression';
+                    sentiment = 'Neutral';
+                } else {
+                    category = 'High Depression';
+                    sentiment = 'Bearish';
+                }
+                
+                document.getElementById('depressionCategory').textContent = category;
+                document.getElementById('marketSentiment').textContent = sentiment;
+            })
+            .catch(error => {
+                console.error('Error loading today data:', error);
+            });
+    }
+
+    // Load recommendations
+    function loadRecommendations() {
+        const indEl = document.getElementById('recIndustries');
+        const compEl = document.getElementById('recCompanies');
+        
+        if (!indEl || !compEl) {
+            console.error('Recommendations elements not found');
+            return;
+        }
+        
+        indEl.innerHTML = '<p style="color: var(--text-muted);">Loading...</p>';
+        compEl.innerHTML = '<p style="color: var(--text-muted);">Loading...</p>';
+
+        fetch('/api/recommendations')
+            .then(r => {
+                if (!r.ok) {
+                    throw new Error(`HTTP error! status: ${r.status}`);
+                }
+                return r.json();
+            })
+            .then(data => {
+                console.log('Recommendations data received:', data);
+                
+                if (data.error) {
+                    console.error('Recommendations API error:', data.error);
+                    indEl.innerHTML = `<p style="color: var(--danger); padding: 1rem;">Error: ${data.error}</p>`;
+                    compEl.innerHTML = `<p style="color: var(--danger); padding: 1rem;">Error: ${data.error}</p>`;
+                    return;
+                }
+
+                const industries = data.industries || [];
+                const companies = data.companies || [];
+                
+                console.log(`Rendering ${industries.length} industries and ${companies.length} companies`);
+                
+                indEl.innerHTML = renderIndustryList(industries);
+                compEl.innerHTML = renderCompanyList(companies);
+            })
+            .catch(err => {
+                console.error('Error loading recommendations:', err);
+                indEl.innerHTML = `<p style="color: var(--danger); padding: 1rem;">Failed to load recommendations. Please check console for details.</p>`;
+                compEl.innerHTML = `<p style="color: var(--danger); padding: 1rem;">Failed to load recommendations. Please check console for details.</p>`;
+            });
+    }
+
+    function renderIndustryList(items) {
+        if (!items.length) return '<p style="color: var(--text-muted);">No recommendations available.</p>';
+        let html = '<div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">';
+        items.forEach((it) => {
+            const ex = (it.example_tickers || []).map(x => `${x.ticker}`).join(', ');
+            html += `
+                <div class="stat-card" style="display:flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div class="stat-label">Industry</div>
+                        <div class="stat-value" style="font-size: 1.1rem;">${it.industry}</div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">Examples: ${ex || '-'}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="stat-label">Score</div>
+                        <div class="stat-value" style="color: var(--success);">${Number(it.score).toFixed(3)}</div>
+                    </div>
+                </div>`;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function renderCompanyList(items) {
+        if (!items.length) return '<p style="color: var(--text-muted);">No recommendations available.</p>';
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem;">';
+        items.forEach((r) => {
+            html += `
+                <div class="stat-card">
+                    <div class="stat-label">${r.industry || ''}</div>
+                    <div class="stat-value" style="font-size:1.1rem;">${r.ticker} <span style="font-size:0.95rem; font-weight:600; color: var(--text-muted);">${r.company_name || ''}</span></div>
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.5rem;">
+                        <div>
+                            <div class="stat-label">Score</div>
+                            <div style="font-weight:700; color: var(--success);">${Number(r.score).toFixed(3)}</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Vol</div>
+                            <div style="font-weight:700;">${Number(r.volatility).toFixed(3)}</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Beta</div>
+                            <div style="font-weight:700;">${Number(r.beta).toFixed(3)}</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Ext.</div>
+                            <div style="font-weight:700;">${Number(r.feature_impact).toFixed(3)}</div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    let selectedTickers = [];
+    let currentIndustry = '';
+
+    function loadIndustryCompanies() {
+        const ticker = document.getElementById('companySelect').value;
+        if (!ticker) {
+            document.getElementById('comparisonCompaniesSection').style.display = 'none';
+            document.getElementById('selectedCompanyInfo').style.display = 'none';
+            return;
+        }
+
+        fetch(`/api/companies-by-industry?ticker=${ticker}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    alert(`Error: ${data.error}`);
+                    return;
+                }
+
+                // Show selected company info
+                document.getElementById('selectedCompanyName').textContent = `${data.selected_company.company_name} (${data.selected_company.ticker})`;
+                document.getElementById('selectedIndustry').textContent = data.industry;
+                document.getElementById('selectedCompanyInfo').style.display = 'block';
+
+                // Store current industry
+                currentIndustry = data.industry;
+                selectedTickers = [ticker]; // Include selected company
+
+                // Populate comparison companies list
+                const container = document.getElementById('comparisonCompaniesList');
+                container.innerHTML = '';
+
+                data.companies.forEach(company => {
+                    if (company.ticker !== ticker) { // Don't show the selected company again
+                        const checkbox = document.createElement('div');
+                        checkbox.className = 'stat-card';
+                        checkbox.style.padding = '0.75rem';
+                        checkbox.innerHTML = `
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" value="${company.ticker}" 
+                                       onchange="updateSelectedTickers()" 
+                                       style="margin-right: 0.5rem; width: 18px; height: 18px;">
+                                <div>
+                                    <div style="font-weight: 600;">${company.ticker}</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-muted);">${company.company_name}</div>
+                                </div>
+                            </label>
+                        `;
+                        container.appendChild(checkbox);
+                    }
+                });
+
+                document.getElementById('comparisonCompaniesSection').style.display = 'block';
+            })
+            .catch(err => {
+                console.error('Error loading companies:', err);
+                alert(`Error: ${err.message}`);
+            });
+    }
+
+    function updateSelectedTickers() {
+        const checkboxes = document.querySelectorAll('#comparisonCompaniesList input[type="checkbox"]:checked');
+        const selectedCompany = document.getElementById('companySelect').value;
+        
+        selectedTickers = [selectedCompany]; // Always include the selected company
+        
+        checkboxes.forEach(cb => {
+            if (selectedTickers.length < 6) { // Max 5 additional + 1 selected = 6 total
+                selectedTickers.push(cb.value);
+            } else {
+                cb.checked = false; // Uncheck if limit reached
+                alert('You can select up to 5 companies for comparison (plus the selected company).');
+            }
+        });
+    }
+
+    function compareCompanies() {
+        if (selectedTickers.length < 1) {
+            alert('Please select at least one company.');
+            return;
+        }
+
+        const params = new URLSearchParams();
+        selectedTickers.forEach(ticker => params.append('tickers', ticker));
+
+        fetch(`/api/company-comparison?${params}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    alert(`Error: ${data.error}`);
+                    return;
+                }
+
+                renderCompanyComparison(data);
+                document.getElementById('predictionResults').classList.remove('hidden');
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert(`Error: ${err.message}`);
+            });
+    }
+
+    function viewIndustryTrends() {
+        if (!currentIndustry) {
+            alert('Please select a company first.');
+            return;
+        }
+
+        fetch(`/api/industry-trends?industry=${encodeURIComponent(currentIndustry)}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    alert(`Error: ${data.error}`);
+                    return;
+                }
+
+                renderIndustryTrends(data);
+                document.getElementById('predictionResults').classList.remove('hidden');
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert(`Error: ${err.message}`);
+            });
+    }
+
+    function renderCompanyComparison(data) {
+        // Clear previous content
+        const resultsDiv = document.getElementById('predictionResults');
+        
+        // Build predictions HTML for each company
+        let predictionsHTML = '';
+        if (data.predictions) {
+            Object.entries(data.predictions).forEach(([ticker, predData]) => {
+                const comp = data.companies.find(c => c.ticker === ticker);
+                if (comp && predData.predictions) {
+                    predictionsHTML += `
+                        <div class="content-section" style="margin: 0 0 2rem 0;">
+                            <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--primary);">
+                                <i class="fas fa-building" style="margin-right: 0.5rem;"></i>${comp.company_name} (${ticker}) - 3-Week Prediction
+                            </h3>
+                            
+                            <!-- Weekly Predictions -->
+                            <div class="prediction-grid" style="margin-bottom: 2rem;">
+                                ${['week1', 'week2', 'week3'].map(week => {
+                                    const weekPred = predData.predictions[week];
+                                    if (!weekPred) return '';
+                                    const trendClass = weekPred.trend === 'Bullish' ? 'positive' : 
+                                                      (weekPred.trend === 'Bearish' ? 'negative' : 'neutral');
+                                    const badgeClass = weekPred.trend === 'Bullish' ? 'badge-success' : 
+                                                      (weekPred.trend === 'Bearish' ? 'badge-danger' : 'badge-warning');
+                                    return `
+                                        <div class="prediction-card">
+                                            <div class="prediction-header">${week === 'week1' ? 'Week 1' : week === 'week2' ? 'Week 2' : 'Week 3'}</div>
+                                            <div class="prediction-value ${trendClass}">${weekPred.change > 0 ? '+' : ''}${weekPred.change.toFixed(2)}%</div>
+                                            <div style="color: var(--text-muted); margin-bottom: 0.75rem;">Predicted: $${weekPred.price.toFixed(2)}</div>
+                                            <span class="badge ${badgeClass}">${weekPred.trend}</span>
+                                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                                Lag Impact: ${weekPred.lag_impact > 0 ? '+' : ''}${weekPred.lag_impact}%
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            
+                            <!-- Prediction Chart -->
+                            <div class="chart-container" style="margin: 0 0 1.5rem 0;">
+                                <h4 class="chart-title">3-Week Price Prediction</h4>
+                                <div id="predictionChart_${ticker}" style="height: 400px;"></div>
+                            </div>
+                            
+                            <!-- Lag Analysis -->
+                            <div class="content-section" style="margin: 0 0 1rem 0;">
+                                <h4 style="font-size: 1.1rem; margin-bottom: 1rem;">
+                                    <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>Lag Effect Analysis (Depression & Rainfall Impact)
+                                </h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                    ${['lag1', 'lag2', 'lag3'].map(lag => {
+                                        const lagData = predData.lag_effects[lag];
+                                        if (!lagData) return '';
+                                        return `
+                                            <div class="stat-card">
+                                                <div class="stat-label">${lag === 'lag1' ? '1 Day' : lag === 'lag2' ? '2 Days' : '3 Days'} Lag</div>
+                                                <div style="font-size: 0.85rem; margin-top: 0.5rem;">
+                                                    <div>Depression: <strong>${lagData.depression_lag.toFixed(1)}</strong></div>
+                                                    <div>Rainfall: <strong>${lagData.rainfall_lag.toFixed(1)}mm</strong></div>
+                                                    <div>Dep Corr: <strong>${lagData.depression_correlation.toFixed(3)}</strong></div>
+                                                    <div>Rain Corr: <strong>${lagData.rainfall_correlation.toFixed(3)}</strong></div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            
+                            <!-- Factors -->
+                            <div class="content-section" style="margin: 0;">
+                                <h4 style="font-size: 1.1rem; margin-bottom: 1rem;">
+                                    <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i>Current Factors
+                                </h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                    <div class="stat-card">
+                                        <div class="stat-label">Depression Index</div>
+                                        <div class="stat-value">${predData.factors.depression_index.toFixed(1)}</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-label">Rainfall</div>
+                                        <div class="stat-value">${predData.factors.rainfall.toFixed(1)}mm</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-label">Volatility</div>
+                                        <div class="stat-value">${predData.factors.volatility.toFixed(4)}</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-label">Market Return</div>
+                                        <div class="stat-value">${predData.factors.market_return.toFixed(2)}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+        
+        resultsDiv.innerHTML = `
+            <div class="content-section" style="margin: 0 0 2rem 0;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-bar" style="margin-right: 0.5rem;"></i>Company Comparison: ${data.industry}
+                </h2>
+                
+                <!-- Company Statistics -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    ${data.companies.map(comp => `
+                        <div class="stat-card">
+                            <div class="stat-label">${comp.ticker}</div>
+                            <div class="stat-value" style="font-size: 1.1rem;">${comp.company_name}</div>
+                            <div style="margin-top: 0.5rem; font-size: 0.85rem;">
+                                <div>Avg Return: <strong>${comp.avg_return.toFixed(2)}%</strong></div>
+                                <div>Volatility: <strong>${comp.volatility.toFixed(4)}</strong></div>
+                                <div>Current Price: <strong>$${comp.current_price.toFixed(2)}</strong></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <!-- Time Series Chart -->
+                <div class="chart-container" style="margin: 0 0 2rem 0;">
+                    <h3 class="chart-title">Price Comparison Over Time</h3>
+                    <div id="comparisonChart" style="height: 500px;"></div>
+                </div>
+            </div>
+            
+            ${predictionsHTML}
+        `;
+
+        // Render chart
+        const traces = [];
+        const colors = ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6', '#1abc9c'];
+        
+        // Historical data
+        Object.entries(data.timeseries).forEach(([ticker, tsData], idx) => {
+            traces.push({
+                x: tsData.dates,
+                y: tsData.close_prices,
+                type: 'scatter',
+                mode: 'lines',
+                name: `${ticker} - ${tsData.company_name}`,
+                line: { color: colors[idx % colors.length], width: 2.5 }
+            });
+            
+            // Add prediction lines if available
+            if (data.predictions && data.predictions[ticker] && data.predictions[ticker].predictions) {
+                const pred = data.predictions[ticker];
+                const lastDate = tsData.dates[tsData.dates.length - 1];
+                const lastPrice = tsData.close_prices[tsData.close_prices.length - 1];
+                
+                // Calculate future dates (assuming 7 days per week)
+                const lastDateObj = new Date(lastDate);
+                const week1Date = new Date(lastDateObj);
+                week1Date.setDate(week1Date.getDate() + 7);
+                const week2Date = new Date(lastDateObj);
+                week2Date.setDate(week2Date.getDate() + 14);
+                const week3Date = new Date(lastDateObj);
+                week3Date.setDate(week3Date.getDate() + 21);
+                
+                const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                                  week2Date.toISOString().split('T')[0], 
+                                  week3Date.toISOString().split('T')[0]];
+                const predPrices = [lastPrice, pred.predictions.week1.price, 
+                                   pred.predictions.week2.price, 
+                                   pred.predictions.week3.price];
+                
+                traces.push({
+                    x: predDates,
+                    y: predPrices,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: `${ticker} - Prediction`,
+                    line: { color: colors[idx % colors.length], width: 2, dash: 'dash' },
+                    marker: { size: 8 }
+                });
+            }
+        });
+
+        const layout = {
+            title: {
+                text: 'Company Price Comparison with 3-Week Predictions',
+                font: { size: 16, color: '#2c3e50', family: 'Inter' }
+            },
+            xaxis: {
+                title: 'Date',
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 10 }
+            },
+            yaxis: {
+                title: 'Close Price ($)',
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 10 }
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            font: { family: 'Inter', color: '#2c3e50' },
+            margin: { l: 80, r: 50, t: 60, b: 80 },
+            showlegend: true,
+            legend: { x: 0.02, y: 0.98, xanchor: 'left', yanchor: 'top' }
+        };
+
+        Plotly.newPlot('comparisonChart', traces, layout, { responsive: true });
+        
+        // Render individual prediction charts for each company
+        if (data.predictions) {
+            Object.entries(data.predictions).forEach(([ticker, predData]) => {
+                if (predData.predictions && data.timeseries[ticker]) {
+                    const tsData = data.timeseries[ticker];
+                    const lastDate = tsData.dates[tsData.dates.length - 1];
+                    const lastPrice = tsData.close_prices[tsData.close_prices.length - 1];
+                    
+                    // Historical + prediction dates
+                    const lastDateObj = new Date(lastDate);
+                    const week1Date = new Date(lastDateObj);
+                    week1Date.setDate(week1Date.getDate() + 7);
+                    const week2Date = new Date(lastDateObj);
+                    week2Date.setDate(week2Date.getDate() + 14);
+                    const week3Date = new Date(lastDateObj);
+                    week3Date.setDate(week3Date.getDate() + 21);
+                    
+                    const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                                      week2Date.toISOString().split('T')[0], 
+                                      week3Date.toISOString().split('T')[0]];
+                    const predPrices = [lastPrice, predData.predictions.week1.price, 
+                                       predData.predictions.week2.price, 
+                                       predData.predictions.week3.price];
+                    
+                    const trace = {
+                        x: predDates,
+                        y: predPrices,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: 'Predicted Price',
+                        line: { color: '#3498db', width: 3 },
+                        marker: { size: 10, color: '#3498db' }
+                    };
+                    
+                    const predLayout = {
+                        title: {
+                            text: `${ticker} - 3-Week Prediction`,
+                            font: { size: 14, color: '#2c3e50', family: 'Inter' }
+                        },
+                        xaxis: {
+                            title: 'Date',
+                            showgrid: true,
+                            gridcolor: '#e0e6ed',
+                            tickfont: { size: 10 }
+                        },
+                        yaxis: {
+                            title: 'Price ($)',
+                            showgrid: true,
+                            gridcolor: '#e0e6ed',
+                            tickfont: { size: 10 }
+                        },
+                        plot_bgcolor: '#f8f9fa',
+                        paper_bgcolor: 'white',
+                        font: { family: 'Inter', color: '#2c3e50' },
+                        margin: { l: 80, r: 50, t: 50, b: 80 },
+                        showlegend: false
+                    };
+                    
+                    setTimeout(() => {
+                        Plotly.newPlot(`predictionChart_${ticker}`, [trace], predLayout, { responsive: true });
+                    }, 100);
+                }
+            });
+        }
+    }
+
+    function renderIndustryTrends(data) {
+        const resultsDiv = document.getElementById('predictionResults');
+        
+        // Build predictions HTML
+        let predictionsHTML = '';
+        if (data.predictions && data.predictions.predictions) {
+            predictionsHTML = `
+                <div class="content-section" style="margin: 2rem 0;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">
+                        <i class="fas fa-crystal-ball" style="margin-right: 0.5rem;"></i>3-Week Industry Prediction (Based on Lag Analysis)
+                    </h2>
+                    
+                    <!-- Weekly Predictions -->
+                    <div class="prediction-grid" style="margin-bottom: 2rem;">
+                        ${['week1', 'week2', 'week3'].map(week => {
+                            const weekPred = data.predictions.predictions[week];
+                            if (!weekPred) return '';
+                            const trendClass = weekPred.trend === 'Bullish' ? 'positive' : 
+                                              (weekPred.trend === 'Bearish' ? 'negative' : 'neutral');
+                            const badgeClass = weekPred.trend === 'Bullish' ? 'badge-success' : 
+                                              (weekPred.trend === 'Bearish' ? 'badge-danger' : 'badge-warning');
+                            return `
+                                <div class="prediction-card">
+                                    <div class="prediction-header">${week === 'week1' ? 'Week 1' : week === 'week2' ? 'Week 2' : 'Week 3'}</div>
+                                    <div class="prediction-value ${trendClass}">${weekPred.change > 0 ? '+' : ''}${weekPred.change.toFixed(2)}%</div>
+                                    <div style="color: var(--text-muted); margin-bottom: 0.75rem;">Predicted: $${weekPred.price.toFixed(2)}</div>
+                                    <span class="badge ${badgeClass}">${weekPred.trend}</span>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                        Lag Impact: ${weekPred.lag_impact > 0 ? '+' : ''}${weekPred.lag_impact}%
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <!-- Prediction Chart -->
+                    <div class="chart-container" style="margin: 0 0 1.5rem 0;">
+                        <h3 class="chart-title">3-Week Industry Price Prediction</h3>
+                        <div id="industryPredictionChart" style="height: 400px;"></div>
+                    </div>
+                    
+                    <!-- Lag Analysis -->
+                    <div class="content-section" style="margin: 0 0 1rem 0;">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+                            <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>Lag Effect Analysis (Depression & Rainfall Impact)
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            ${['lag1', 'lag2', 'lag3'].map(lag => {
+                                const lagData = data.predictions.lag_effects[lag];
+                                if (!lagData) return '';
+                                return `
+                                    <div class="stat-card">
+                                        <div class="stat-label">${lag === 'lag1' ? '1 Day' : lag === 'lag2' ? '2 Days' : '3 Days'} Lag</div>
+                                        <div style="font-size: 0.85rem; margin-top: 0.5rem;">
+                                            <div>Depression: <strong>${lagData.depression_lag.toFixed(1)}</strong></div>
+                                            <div>Rainfall: <strong>${lagData.rainfall_lag.toFixed(1)}mm</strong></div>
+                                            <div>Dep Corr: <strong>${lagData.depression_correlation.toFixed(3)}</strong></div>
+                                            <div>Rain Corr: <strong>${lagData.rainfall_correlation.toFixed(3)}</strong></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Factors -->
+                    <div class="content-section" style="margin: 0;">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">
+                            <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i>Current Factors Affecting Prediction
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div class="stat-card">
+                                <div class="stat-label">Depression Index</div>
+                                <div class="stat-value">${data.predictions.factors.depression_index.toFixed(1)}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Rainfall</div>
+                                <div class="stat-value">${data.predictions.factors.rainfall.toFixed(1)}mm</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Volatility</div>
+                                <div class="stat-value">${data.predictions.factors.volatility.toFixed(4)}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Market Return</div>
+                                <div class="stat-value">${data.predictions.factors.market_return.toFixed(2)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        resultsDiv.innerHTML = `
+            <div class="content-section" style="margin: 0 0 2rem 0;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">
+                    <i class="fas fa-industry" style="margin-right: 0.5rem;"></i>Industry Trends: ${data.industry}
+                </h2>
+                
+                <!-- Industry Statistics -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-label">Average Return</div>
+                        <div class="stat-value">${data.statistics.avg_return.toFixed(2)}%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Average Volatility</div>
+                        <div class="stat-value">${data.statistics.avg_volatility.toFixed(4)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Market Correlation</div>
+                        <div class="stat-value">${data.statistics.market_correlation.toFixed(3)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Depression Correlation</div>
+                        <div class="stat-value">${data.statistics.depression_correlation.toFixed(3)}</div>
+                    </div>
+                    ${data.statistics.rainfall_correlation !== undefined ? `
+                    <div class="stat-card">
+                        <div class="stat-label">Rainfall Correlation</div>
+                        <div class="stat-value">${data.statistics.rainfall_correlation.toFixed(3)}</div>
+                    </div>
+                    ` : ''}
+                    <div class="stat-card">
+                        <div class="stat-label">Number of Companies</div>
+                        <div class="stat-value">${data.statistics.num_companies}</div>
+                    </div>
+                </div>
+                
+                <!-- Industry Time Series Chart -->
+                <div class="chart-container" style="margin: 0;">
+                    <h3 class="chart-title">Industry Performance Over Time</h3>
+                    <div id="industryTrendChart" style="height: 500px;"></div>
+                </div>
+            </div>
+            
+            ${predictionsHTML}
+        `;
+
+        // Render chart
+        const trace1 = {
+            x: data.timeseries.dates,
+            y: data.timeseries.close_prices,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Average Close Price',
+            line: { color: '#3498db', width: 2.5 },
+            yaxis: 'y'
+        };
+
+        const trace2 = {
+            x: data.timeseries.dates,
+            y: data.timeseries.returns,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Returns (%)',
+            line: { color: '#27ae60', width: 2 },
+            yaxis: 'y2'
+        };
+        
+        // Add prediction line if available
+        const traces = [trace1, trace2];
+        if (data.predictions && data.predictions.predictions) {
+            const pred = data.predictions;
+            const lastDate = data.timeseries.dates[data.timeseries.dates.length - 1];
+            const lastPrice = data.timeseries.close_prices[data.timeseries.close_prices.length - 1];
+            
+            // Calculate future dates
+            const lastDateObj = new Date(lastDate);
+            const week1Date = new Date(lastDateObj);
+            week1Date.setDate(week1Date.getDate() + 7);
+            const week2Date = new Date(lastDateObj);
+            week2Date.setDate(week2Date.getDate() + 14);
+            const week3Date = new Date(lastDateObj);
+            week3Date.setDate(week3Date.getDate() + 21);
+            
+            const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                              week2Date.toISOString().split('T')[0], 
+                              week3Date.toISOString().split('T')[0]];
+            const predPrices = [lastPrice, pred.predictions.week1.price, 
+                               pred.predictions.week2.price, 
+                               pred.predictions.week3.price];
+            
+            traces.push({
+                x: predDates,
+                y: predPrices,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: '3-Week Prediction (Lag-based)',
+                line: { color: '#e74c3c', width: 3, dash: 'dash' },
+                marker: { size: 10, color: '#e74c3c' },
+                yaxis: 'y'
+            });
+        }
+
+        const layout = {
+            title: {
+                text: 'Industry Trends Analysis with 3-Week Prediction',
+                font: { size: 16, color: '#2c3e50', family: 'Inter' }
+            },
+            xaxis: {
+                title: 'Date',
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 10 }
+            },
+            yaxis: {
+                title: 'Average Close Price ($)',
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 10 }
+            },
+            yaxis2: {
+                title: 'Returns (%)',
+                overlaying: 'y',
+                side: 'right',
+                showgrid: false,
+                tickfont: { size: 10 }
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            font: { family: 'Inter', color: '#2c3e50' },
+            margin: { l: 80, r: 80, t: 60, b: 80 },
+            showlegend: true,
+            legend: { x: 0.02, y: 0.98, xanchor: 'left', yanchor: 'top' }
+        };
+
+        Plotly.newPlot('industryTrendChart', traces, layout, { responsive: true });
+        
+        // Render prediction chart if available
+        if (data.predictions && data.predictions.predictions) {
+            const pred = data.predictions;
+            const lastDate = data.timeseries.dates[data.timeseries.dates.length - 1];
+            const lastPrice = data.timeseries.close_prices[data.timeseries.close_prices.length - 1];
+            
+            const lastDateObj = new Date(lastDate);
+            const week1Date = new Date(lastDateObj);
+            week1Date.setDate(week1Date.getDate() + 7);
+            const week2Date = new Date(lastDateObj);
+            week2Date.setDate(week2Date.getDate() + 14);
+            const week3Date = new Date(lastDateObj);
+            week3Date.setDate(week3Date.getDate() + 21);
+            
+            const predDates = [lastDate, week1Date.toISOString().split('T')[0], 
+                              week2Date.toISOString().split('T')[0], 
+                              week3Date.toISOString().split('T')[0]];
+            const predPrices = [lastPrice, pred.predictions.week1.price, 
+                               pred.predictions.week2.price, 
+                               pred.predictions.week3.price];
+            
+            const predTrace = {
+                x: predDates,
+                y: predPrices,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Predicted Price',
+                line: { color: '#e74c3c', width: 3 },
+                marker: { size: 10, color: '#e74c3c' }
+            };
+            
+            const predLayout = {
+                title: {
+                    text: '3-Week Industry Prediction (Based on Lag Analysis)',
+                    font: { size: 14, color: '#2c3e50', family: 'Inter' }
+                },
+                xaxis: {
+                    title: 'Date',
+                    showgrid: true,
+                    gridcolor: '#e0e6ed',
+                    tickfont: { size: 10 }
+                },
+                yaxis: {
+                    title: 'Average Price ($)',
+                    showgrid: true,
+                    gridcolor: '#e0e6ed',
+                    tickfont: { size: 10 }
+                },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter', color: '#2c3e50' },
+                margin: { l: 80, r: 50, t: 50, b: 80 },
+                showlegend: false
+            };
+            
+            setTimeout(() => {
+                Plotly.newPlot('industryPredictionChart', [predTrace], predLayout, { responsive: true });
+            }, 100);
+        }
+    }
+
+    function updatePrediction() {
+        // Legacy function - kept for compatibility
+        const company = document.getElementById('companySelect').value;
+        if (!company) {
+            alert('Please select a company first.');
+            return;
+        }
+        loadIndustryCompanies();
+    }
+
+    function updatePredictionCards(data) {
+        const predictions = data.predictions;
+        
+        if (predictions.week1) {
+            updateWeekCard('thisWeek', predictions.week1);
+        }
+        if (predictions.week2) {
+            updateWeekCard('nextWeek', predictions.week2);
+        }
+        if (predictions.week3) {
+            updateWeekCard('week3', predictions.week3);
+        }
+    }
+
+    function updateWeekCard(prefix, weekData) {
+        const change = weekData.change || 0;
+        const trend = weekData.trend || 'Neutral';
+        
+        document.getElementById(`${prefix}Price`).textContent = 
+            `Predicted: $${weekData.price?.toFixed(2) || 'N/A'}`;
+        document.getElementById(`${prefix}Change`).textContent = 
+            `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+        document.getElementById(`${prefix}Trend`).textContent = trend;
+        
+        const changeEl = document.getElementById(`${prefix}Change`);
+        const trendEl = document.getElementById(`${prefix}Trend`);
+        
+        changeEl.className = 'prediction-value ' + getTrendClass(trend);
+        trendEl.className = 'badge ' + getTrendBadgeClass(trend);
+    }
+
+    function getTrendClass(trend) {
+        switch(trend) {
+            case 'Bullish': return 'positive';
+            case 'Bearish': return 'negative';
+            case 'Neutral': return 'neutral';
+            default: return 'neutral';
+        }
+    }
+
+    function getTrendBadgeClass(trend) {
+        switch(trend) {
+            case 'Bullish': return 'badge-success';
+            case 'Bearish': return 'badge-danger';
+            case 'Neutral': return 'badge-warning';
+            default: return 'badge-warning';
+        }
+    }
+
+    function updatePredictionChart(data) {
+        const trace = {
+            x: ['Current', '1 Week', '2 Weeks', '3 Weeks'],
+            y: [
+                data.current_price,
+                data.predictions.week1.price,
+                data.predictions.week2.price,
+                data.predictions.week3.price
+            ],
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {
+                color: '#3498db',
+                width: 3
+            },
+            marker: {
+                size: 10,
+                color: ['#2c3e50', '#27ae60', '#3498db', '#f39c12'],
+                line: { color: 'white', width: 2 }
+            }
+        };
+        
+        const layout = {
+            title: {
+                text: `${data.symbol || data.industry} - Stock Prediction`,
+                font: { size: 16, color: '#2c3e50', family: 'Inter' }
+            },
+            xaxis: {
+                title: 'Time Period',
+                gridcolor: '#e0e6ed'
+            },
+            yaxis: {
+                title: 'Stock Price ($)',
+                gridcolor: '#e0e6ed'
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            margin: { t: 60, r: 20, l: 60, b: 60 },
+            font: { family: 'Inter', color: '#2c3e50' }
+        };
+        
+        Plotly.newPlot('predictionChart', [trace], layout, { responsive: true });
+    }
+
+    function updateAdvancedAnalytics(data) {
+        // Update lag analysis
+        if (data.lag_analysis) {
+            const lags = ['lag1', 'lag2', 'lag3'];
+            const labels = ['1 Day', '2 Days', '3 Days'];
+            let html = '<table style="width: 100%; font-size: 0.9rem;"><tr style="border-bottom: 1px solid var(--border);"><th style="padding: 0.5rem; text-align: left;">Lag</th><th style="padding: 0.5rem; text-align: right;">Correlation</th></tr>';
+            
+            lags.forEach((lag, i) => {
+                if (data.lag_analysis[lag]) {
+                    const corr = data.lag_analysis[lag].correlation || 0;
+                    html += `<tr style="border-bottom: 1px solid var(--border);"><td style="padding: 0.5rem;">${labels[i]}</td><td style="padding: 0.5rem; text-align: right; font-weight: 600;">${corr.toFixed(3)}</td></tr>`;
+                }
+            });
+            html += '</table>';
+            document.getElementById('lagAnalysisTable').innerHTML = html;
+        }
+        
+        // Update industry comparison
+        if (data.industry_comparison) {
+            document.getElementById('marketReturn').textContent = 
+                `${data.industry_comparison.market_return?.toFixed(2) || '--'}%`;
+            document.getElementById('industryReturn').textContent = 
+                `${data.industry_comparison.industry_expected_return?.toFixed(2) || '--'}%`;
+            document.getElementById('industryMultiplier').textContent = 
+                `${data.industry_comparison.vs_market_factor?.toFixed(1) || '--'}x`;
+        }
+    }
+
+    function clearSelection() {
+        document.getElementById('companySelect').value = '';
+        document.getElementById('industrySelect').value = '';
+        document.getElementById('comparisonCompaniesSection').style.display = 'none';
+        document.getElementById('selectedCompanyInfo').style.display = 'none';
+        document.getElementById('comparisonCompaniesList').innerHTML = '';
+        document.getElementById('predictionResults').classList.add('hidden');
+        selectedTickers = [];
+        currentIndustry = '';
+        Plotly.purge('predictionChart');
+        Plotly.purge('comparisonChart');
+        Plotly.purge('industryTrendChart');
+    }
+    
+    // Load industry patterns based on depression index
+    function loadIndustryPatterns() {
+        fetch('/api/industry-patterns')
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Industry patterns error:', data.error);
+                    return;
+                }
+                
+                renderIndustryPatternsChart(data);
+                updateSectorStats(data);
+                
+                // Update industry sensitivity rankings
+                if (data.key_insights) {
+                    updateIndustrySensitivity(data.key_insights);
+                }
+            })
+            .catch(err => {
+                console.error('Error loading industry patterns:', err);
+            });
+    }
+
+    function renderIndustryPatternsChart(data) {
+        // Create traces for each industry
+        const traces = [];
+        const industries = Object.keys(data.patterns || {});
+        const colors = ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6', '#1abc9c', '#34495e', '#e67e22'];
+        
+        industries.forEach((industry, idx) => {
+            const pattern = data.patterns[industry];
+            traces.push({
+                x: pattern.depression_levels,
+                y: pattern.returns,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: industry,
+                line: { color: colors[idx % colors.length], width: 3 },
+                marker: { size: 6 }
+            });
+        });
+        
+        // Add vertical line for current depression index
+        if (data.current_depression_index) {
+            const currentLine = {
+                x: [data.current_depression_index, data.current_depression_index],
+                y: [-2, 2],
+                type: 'scatter',
+                mode: 'lines',
+                name: `Today's Level (${data.current_depression_index})`,
+                line: { color: '#e74c3c', width: 3, dash: 'dash' },
+                showlegend: true
+            };
+            traces.push(currentLine);
+        }
+        
+        const layout = {
+            title: {
+                text: 'Industry Performance vs Depression Index',
+                font: { size: 18, color: '#2c3e50', family: 'Inter' }
+            },
+            xaxis: {
+                title: 'Depression Index Score',
+                gridcolor: '#e0e6ed',
+                range: [50, 100]
+            },
+            yaxis: {
+                title: 'Expected Return (%)',
+                gridcolor: '#e0e6ed',
+                range: [-2, 2]
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            margin: { t: 60, r: 20, l: 60, b: 60 },
+            font: { family: 'Inter', color: '#2c3e50' },
+            legend: { 
+                orientation: 'h',
+                y: -0.2,
+                x: 0.5,
+                xanchor: 'center'
+            }
+        };
+        
+        Plotly.newPlot('industryPatternChart', traces, layout, { responsive: true });
+    }
+
+    function updateSectorStats(data) {
+        if (data.sector_analysis) {
+            document.getElementById('bestSector').textContent = data.sector_analysis.best_sector || '--';
+            document.getElementById('bestSectorReturn').textContent = 
+                data.sector_analysis.best_return ? `+${data.sector_analysis.best_return.toFixed(2)}%` : '--';
+            
+            document.getElementById('volatileSector').textContent = data.sector_analysis.volatile_sector || '--';
+            document.getElementById('volatileSectorRisk').textContent = 
+                data.sector_analysis.volatile_risk ? `${data.sector_analysis.volatile_risk.toFixed(2)}% volatility` : '--';
+        }
+    }
+    
+    function updateIndustrySensitivity(insights) {
+        const mostImpacted = insights.most_impacted_industries || [];
+        const leastImpacted = insights.least_impacted_industries || [];
+        
+        const mostEl = document.getElementById('mostImpactedIndustries');
+        const leastEl = document.getElementById('leastImpactedIndustries');
+        
+        if (mostEl && mostImpacted.length > 0) {
+            let html = '<div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">';
+            mostImpacted.forEach((ind, idx) => {
+                const corrColor = ind.correlation < 0 ? 'var(--danger)' : 'var(--warning)';
+                html += `
+                    <div class="stat-card" style="padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--primary);">${ind.industry}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                    Correlation: <strong style="color: ${corrColor};">${ind.correlation.toFixed(3)}</strong>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">Expected Return</div>
+                                <div style="font-weight: 700; color: ${ind.expected_return >= 0 ? 'var(--success)' : 'var(--danger)'};">
+                                    ${ind.expected_return >= 0 ? '+' : ''}${ind.expected_return.toFixed(2)}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            mostEl.innerHTML = html;
+        }
+        
+        if (leastEl && leastImpacted.length > 0) {
+            let html = '<div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">';
+            leastImpacted.forEach((ind, idx) => {
+                html += `
+                    <div class="stat-card" style="padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--primary);">${ind.industry}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                    Correlation: <strong style="color: var(--success);">${ind.correlation.toFixed(3)}</strong>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted);">Expected Return</div>
+                                <div style="font-weight: 700; color: ${ind.expected_return >= 0 ? 'var(--success)' : 'var(--danger)'};">
+                                    ${ind.expected_return >= 0 ? '+' : ''}${ind.expected_return.toFixed(2)}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            leastEl.innerHTML = html;
+        }
+    }
+
+    // Load detailed industry patterns (similar to analysis_4_industry_patterns.png)
+    function loadDetailedIndustryPatterns() {
+        fetch('/api/industry-patterns-detailed')
+            .then(r => {
+                if (!r.ok) {
+                    throw new Error(`HTTP error! status: ${r.status}`);
+                }
+                return r.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    console.error('Detailed industry patterns error:', data.error);
+                    document.getElementById('chart1').innerHTML = '<p style="color: var(--danger); padding: 2rem; text-align: center;">Error loading data: ' + data.error + '</p>';
+                    return;
+                }
+                
+                // Validate data structure
+                if (!data.top_15_industries || !data.sector_performance || !data.industry_correlation || !data.sector_timeseries) {
+                    console.error('Invalid data structure:', data);
+                    document.getElementById('chart1').innerHTML = '<p style="color: var(--danger); padding: 2rem; text-align: center;">Invalid data structure received</p>';
+                    return;
+                }
+                
+                renderDetailedIndustryChart(data);
+                renderVolatilityPredictions(data);
+            })
+            .catch(err => {
+                console.error('Error loading detailed industry patterns:', err);
+                document.getElementById('chart1').innerHTML = '<p style="color: var(--danger); padding: 2rem; text-align: center;">Failed to load charts. Please check console for details.</p>';
+            });
+    }
+
+    function renderDetailedIndustryChart(data) {
+        // Create 4 separate charts, one below the other
+        const currentDepression = data.current_depression_index || 70;
+        const thresholdEl = document.getElementById('thresholdValue');
+        if (thresholdEl) {
+            thresholdEl.textContent = currentDepression.toFixed(1);
+        }
+        
+        // Chart 1: Top 15 Industries by Average Price Change
+        if (!data.top_15_industries || !data.top_15_industries.industries || !data.top_15_industries.price_changes) {
+            console.error('Missing top_15_industries data');
+            return;
+        }
+        
+        const trace1 = {
+            x: data.top_15_industries.price_changes,
+            y: data.top_15_industries.industries,
+            type: 'bar',
+            orientation: 'h',
+            marker: {
+                color: data.top_15_industries.price_changes.map(v => v > 0 ? '#27ae60' : '#e74c3c'),
+                opacity: 0.7
+            },
+            text: data.top_15_industries.industries,
+            hovertemplate: '<b>%{text}</b><br>Price Change: %{x:.2f}%<extra></extra>'
+        };
+        
+        const layout1 = {
+            xaxis: { 
+                title: { text: 'Average Price Change (%)', font: { size: 14 } },
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 11 }
+            },
+            yaxis: { 
+                title: '',
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 10 },
+                automargin: true
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            font: { family: 'Inter', color: '#2c3e50' },
+            margin: { l: 300, r: 50, t: 20, b: 80 },
+            showlegend: false
+        };
+        
+        try {
+            Plotly.newPlot('chart1', [trace1], layout1, { responsive: true });
+        } catch (e) {
+            console.error('Error plotting chart1:', e);
+        }
+        
+        // Chart 2: Sector Performance
+        if (!data.sector_performance || !data.sector_performance.sectors || !data.sector_performance.price_changes) {
+            console.error('Missing sector_performance data');
+            return;
+        }
+        
+        const trace2 = {
+            x: data.sector_performance.price_changes,
+            y: data.sector_performance.sectors,
+            type: 'bar',
+            orientation: 'h',
+            marker: {
+                color: data.sector_performance.price_changes.map(v => v > 0 ? '#27ae60' : '#e74c3c'),
+                opacity: 0.7
+            }
+        };
+        
+        const layout2 = {
+            xaxis: { 
+                title: { text: 'Average Price Change (%)', font: { size: 14 } },
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 11 }
+            },
+            yaxis: { 
+                title: '',
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 11 },
+                automargin: true
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            font: { family: 'Inter', color: '#2c3e50' },
+            margin: { l: 200, r: 50, t: 20, b: 80 },
+            showlegend: false
+        };
+        
+        try {
+            Plotly.newPlot('chart2', [trace2], layout2, { responsive: true });
+        } catch (e) {
+            console.error('Error plotting chart2:', e);
+        }
+        
+        // Chart 3: Industry Correlation with Depression
+        if (!data.industry_correlation || !data.industry_correlation.industries || !data.industry_correlation.correlations) {
+            console.error('Missing industry_correlation data');
+            return;
+        }
+        
+        const trace3 = {
+            x: data.industry_correlation.correlations,
+            y: data.industry_correlation.industries,
+            type: 'bar',
+            orientation: 'h',
+            marker: {
+                color: data.industry_correlation.correlations.map(v => v < 0 ? '#e74c3c' : '#3498db'),
+                opacity: 0.7
+            },
+            text: data.industry_correlation.industries,
+            hovertemplate: '<b>%{text}</b><br>Correlation: %{x:.3f}<extra></extra>'
+        };
+        
+        const layout3 = {
+            xaxis: { 
+                title: { text: 'Correlation with Depression Index', font: { size: 14 } },
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 11 }
+            },
+            yaxis: { 
+                title: '',
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 10 },
+                automargin: true
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            font: { family: 'Inter', color: '#2c3e50' },
+            margin: { l: 300, r: 50, t: 20, b: 80 },
+            showlegend: false
+        };
+        
+        try {
+            Plotly.newPlot('chart3', [trace3], layout3, { responsive: true });
+        } catch (e) {
+            console.error('Error plotting chart3:', e);
+        }
+        
+        // Chart 4: Top 5 Sectors Time Series
+        if (!data.sector_timeseries || Object.keys(data.sector_timeseries).length === 0) {
+            console.error('Missing sector_timeseries data');
+            return;
+        }
+        
+        const sectorTraces = [];
+        const colors = ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6'];
+        let colorIdx = 0;
+        for (const [sector, sectorData] of Object.entries(data.sector_timeseries)) {
+            if (sectorData && sectorData.dates && sectorData.close_prices) {
+                sectorTraces.push({
+                    x: sectorData.dates,
+                    y: sectorData.close_prices,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: sector,
+                    line: { color: colors[colorIdx % colors.length], width: 2.5 }
+                });
+                colorIdx++;
+            }
+        }
+        
+        const layout4 = {
+            xaxis: { 
+                title: { text: 'Date', font: { size: 14 } },
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 11 }
+            },
+            yaxis: { 
+                title: { text: 'Average Close Price ($)', font: { size: 14 } },
+                showgrid: true,
+                gridcolor: '#e0e6ed',
+                tickfont: { size: 11 }
+            },
+            plot_bgcolor: '#f8f9fa',
+            paper_bgcolor: 'white',
+            font: { family: 'Inter', color: '#2c3e50' },
+            margin: { l: 100, r: 50, t: 20, b: 80 },
+            showlegend: true,
+            legend: { x: 0.02, y: 0.98, xanchor: 'left', yanchor: 'top' }
+        };
+        
+        try {
+            Plotly.newPlot('chart4', sectorTraces, layout4, { responsive: true });
+        } catch (e) {
+            console.error('Error plotting chart4:', e);
+        }
+    }
+
+    function renderVolatilityPredictions(data) {
+        const predictions = data.volatility_predictions || {};
+        const container = document.getElementById('volatilityPredictions');
+        
+        if (Object.keys(predictions).length === 0) {
+            container.innerHTML = '<p style="color: var(--text-muted);">No volatility predictions available.</p>';
+            return;
+        }
+        
+        let html = '';
+        for (const [industry, pred] of Object.entries(predictions)) {
+            const changeClass = pred.volatility_change_pct > 0 ? 'danger' : (pred.volatility_change_pct < 0 ? 'success' : 'warning');
+            const changeIcon = pred.volatility_change_pct > 0 ? '↑' : (pred.volatility_change_pct < 0 ? '↓' : '→');
+            
+            html += `
+                <div class="stat-card">
+                    <div class="stat-label">${industry}</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Historical</div>
+                            <div style="font-weight: 600; color: var(--text-main);">${pred.historical_volatility}%</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Predicted</div>
+                            <div style="font-weight: 600; color: var(--${changeClass});">${pred.predicted_volatility}%</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Change</div>
+                        <div style="font-weight: 700; color: var(--${changeClass});">
+                            ${changeIcon} ${Math.abs(pred.volatility_change_pct)}%
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            Correlation: ${pred.correlation.toFixed(3)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = html;
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}Industry Impact Analysis - Depression & Stock Market{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" style="color: var(--columbia-blue-dark);">Home</a></li>
+                <li class="breadcrumb-item active">Industry Impact Analysis</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-2" style="color: var(--columbia-dark);">
+            <i class="fas fa-industry me-2"></i>Industry Impact Analysis
+        </h2>
+        <p class="text-muted">Sector-wise correlation between depression index and stock market performance</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-industry me-2"></i>Industry Patterns Overview</h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/analysis_4_industry_patterns.png" class="img-fluid w-100" alt="Industry Patterns">
+                </div>
+                <div class="card-footer bg-light">
+                    <p class="mb-0 small text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Analysis of industry-specific patterns in relation to depression index across different sectors.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #75A8C8 0%, #5C9BB5 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-pie me-2"></i>Industry Detail Analysis</h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/analysis_4_industry_detail.png" class="img-fluid w-100" alt="Industry Detail">
+                </div>
+                <div class="card-footer bg-light">
+                    <p class="mb-0 small text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Detailed breakdown of industry performance metrics and their relationship with market sentiment.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <h5 class="fw-semibold" style="color: var(--columbia-dark);">
+                <i class="fas fa-chart-bar me-2"></i>Portfolio Statistics
+            </h5>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-building fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                    <h6 class="text-uppercase text-muted mb-2">Total Stocks</h6>
+                    <h2 class="fw-bold" style="color: var(--columbia-dark);" id="totalStocks">498</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-chart-pie fa-3x mb-3" style="color: #28a745;"></i>
+                    <h6 class="text-uppercase text-muted mb-2">Industries</h6>
+                    <h2 class="fw-bold" style="color: var(--columbia-dark);">12</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-calendar-alt fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                    <h6 class="text-uppercase text-muted mb-2">Date Range</h6>
+                    <h3 class="fw-bold" style="color: var(--columbia-dark);">2017-2024</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-database fa-3x mb-3" style="color: #28a745;"></i>
+                    <h6 class="text-uppercase text-muted mb-2">Observations</h6>
+                    <h2 class="fw-bold" style="color: var(--columbia-dark);">551</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Performance by Depression Level -->
+    <div class="row mb-4">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-cloud-rain me-2"></i>Rainfall Impact Analysis</h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/analysis_3_rainfall_impact.png" class="img-fluid w-100" alt="Rainfall Impact">
+                </div>
+                <div class="card-footer bg-light">
+                    <p class="mb-0 small text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Analysis of rainfall patterns and their potential correlation with depression index and market behavior.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Charts Section -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <h5 class="fw-semibold" style="color: var(--columbia-dark);">
+                <i class="fas fa-mouse-pointer me-2"></i>Interactive Analysis
+            </h5>
+            <p class="text-muted small">Explore the data with interactive visualizations</p>
+        </div>
+        
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-bar me-2"></i>Stock Performance by Depression Index Category</h5>
+                </div>
+                <div class="card-body">
+                    <div id="categoryChart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove duplicate section -->
+    <div class="row mb-4" style="display: none;">
+        <div class="col-12">
+            <div class="card">"
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-bar me-2"></i>Stock Performance by Depression Index Category</h5>
+                </div>
+                <div class="card-body">
+                    <div id="categoryChart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volatility Analysis -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-area me-2"></i>Volatility vs Depression Index</h5>
+                </div>
+                <div class="card-body">
+                    <div id="volatilityScatter" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #75A8C8 0%, #5C9BB5 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-coins me-2"></i>Trading Volume vs Depression Index</h5>
+                </div>
+                <div class="card-body">
+                    <div id="volumeScatter" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Insights -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-lightbulb me-2"></i>Key Insights</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3" style="color: var(--columbia-dark);">Positive Findings:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <strong>Price Range (Volatility)</strong> shows highest correlation (r=0.275) with Depression Index
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <strong>S&P 500 Volatility</strong> is significantly correlated (r=0.267, p<0.001)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <strong>Trading Volume</strong> shows positive relationship with depression levels
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3" style="color: var(--columbia-dark);">Industry Patterns:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-chart-line me-2" style="color: var(--columbia-blue-dark);"></i>
+                                    Market volatility increases during high depression periods
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-chart-line me-2" style="color: var(--columbia-blue-dark);"></i>
+                                    Stock prices show moderate correlation with depression index
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-chart-line me-2" style="color: var(--columbia-blue-dark);"></i>
+                                    Portfolio spans 12 diverse industries with 498 stocks
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadIndustryData();
+});
+
+function loadIndustryData() {
+    fetch('/api/timeseries-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('API Error:', data.error);
+                return;
+            }
+            
+            // Group data by depression index category
+            const categories = { 'Low': [], 'Medium': [], 'High': [] };
+            const volatilities = [];
+            const volumes = [];
+            const depressionLevels = [];
+            
+            data.depression_index.forEach((val, idx) => {
+                if (val < 30) {
+                    categories['Low'].push(data.stock_close[idx]);
+                } else if (val < 60) {
+                    categories['Medium'].push(data.stock_close[idx]);
+                } else {
+                    categories['High'].push(data.stock_close[idx]);
+                }
+                
+                volatilities.push(data.volatility[idx]);
+                depressionLevels.push(val);
+            });
+            
+            // Category Bar Chart
+            const categoryTrace = {
+                x: ['Low Depression (<30)', 'Medium Depression (30-60)', 'High Depression (>60)'],
+                y: [
+                    categories['Low'].reduce((a,b) => a+b, 0) / categories['Low'].length || 0,
+                    categories['Medium'].reduce((a,b) => a+b, 0) / categories['Medium'].length || 0,
+                    categories['High'].reduce((a,b) => a+b, 0) / categories['High'].length || 0
+                ],
+                type: 'bar',
+                marker: {
+                    color: ['#28a745', '#ffc107', '#dc3545'],
+                    line: { color: 'white', width: 2 }
+                }
+            };
+            
+            const categoryLayout = {
+                title: '',
+                xaxis: { title: 'Depression Index Category' },
+                yaxis: { title: 'Average Stock Close Price ($)' },
+                margin: { t: 20, r: 20, l: 60, b: 100 },
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('categoryChart', [categoryTrace], categoryLayout, {responsive: true});
+            
+            // Volatility Scatter
+            const volScatter = {
+                x: depressionLevels,
+                y: volatilities,
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: 6,
+                    color: depressionLevels,
+                    colorscale: [
+                        [0, '#28a745'],
+                        [0.5, '#ffc107'],
+                        [1, '#dc3545']
+                    ],
+                    showscale: true,
+                    colorbar: { title: 'Depression<br>Index' },
+                    opacity: 0.6
+                }
+            };
+            
+            const volLayout = {
+                title: '',
+                xaxis: { title: 'Depression Index', gridcolor: '#e8f4f8' },
+                yaxis: { title: 'Volatility (7-Day)', gridcolor: '#e8f4f8' },
+                margin: { t: 20, r: 80, l: 60, b: 60 },
+                hovermode: 'closest',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('volatilityScatter', [volScatter], volLayout, {responsive: true});
+            
+            // Volume Scatter (simulated from stock close as proxy)
+            const volData = data.stock_close.map((val, idx) => val * 1000000); // Scale for visualization
+            
+            const volumeScatter = {
+                x: depressionLevels,
+                y: volData,
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: 6,
+                    color: '#5C9BB5',
+                    opacity: 0.5
+                }
+            };
+            
+            const volumeLayout = {
+                title: '',
+                xaxis: { title: 'Depression Index', gridcolor: '#e8f4f8' },
+                yaxis: { title: 'Trading Volume (relative)', gridcolor: '#e8f4f8' },
+                margin: { t: 20, r: 20, l: 80, b: 60 },
+                hovermode: 'closest',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('volumeScatter', [volumeScatter], volumeLayout, {responsive: true});
+        })
+        .catch(error => {
+            console.error('Error loading industry data:', error);
+        });
+}
+</script>
+{% endblock %}

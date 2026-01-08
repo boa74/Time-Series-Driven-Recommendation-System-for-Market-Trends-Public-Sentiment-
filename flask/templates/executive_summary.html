@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}Executive Summary Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" style="color: var(--columbia-blue-dark);">Home</a></li>
+                <li class="breadcrumb-item active">Executive Summary</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-2" style="color: var(--columbia-dark);">
+            <i class="fas fa-chart-pie me-2"></i>Executive Summary Dashboard
+        </h2>
+        <p class="text-muted">Comprehensive overview of depression index and stock market analysis (2017-2024)</p>
+    </div>
+
+    <!-- Executive Summary Dashboard -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-tachometer-alt me-2"></i>Executive Summary Dashboard</h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/EXECUTIVE_SUMMARY_DASHBOARD.png" class="img-fluid w-100" alt="Executive Summary Dashboard">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistical Significance Analysis -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-bar me-2"></i>Statistical Significance Analysis</h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/STATISTICAL_SIGNIFICANCE_ANALYSIS.png" class="img-fluid w-100" alt="Statistical Significance Analysis">
+                </div>
+                <div class="card-footer bg-light">
+                    <p class="mb-0 small text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        This chart shows the statistical significance of correlations between depression index and various market variables.
+                        Lower p-values indicate stronger evidence of correlation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Correlation Analysis -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h6 class="mb-0 fw-semibold"><i class="fas fa-table me-2"></i>Correlation Comparison</h6>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/CORRELATION_COMPARISON_TABLE.png" class="img-fluid w-100" alt="Correlation Comparison Table">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #75A8C8 0%, #5C9BB5 100%);">
+                    <h6 class="mb-0 fw-semibold"><i class="fas fa-sort-amount-down me-2"></i>Importance Ranking</h6>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/CORRELATION_IMPORTANCE_RANKING.png" class="img-fluid w-100" alt="Correlation Importance Ranking">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Depression Index Analysis -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-brain me-2"></i>Depression Index vs Word Count</h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/images/DEPRESSION_INDEX_VS_WORDCOUNT.png" class="img-fluid w-100" alt="Depression Index vs Word Count">
+                </div>
+                <div class="card-footer bg-light">
+                    <p class="mb-0 small text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Validation of depression index calculation showing relationship between depression-related word counts and the computed index.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Insights -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-lightbulb me-2"></i>Key Research Findings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3" style="color: var(--columbia-dark);">Significant Correlations:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-shrink-0">
+                                            <span class="badge bg-success rounded-pill">1</span>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <strong>Price Range (Volatility)</strong><br>
+                                            <small class="text-muted">r=0.275, p<0.001 - Highest correlation with depression index</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-shrink-0">
+                                            <span class="badge bg-success rounded-pill">2</span>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <strong>S&P 500 Volatility</strong><br>
+                                            <small class="text-muted">r=0.267, p<0.001 - Strong market volatility correlation</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-shrink-0">
+                                            <span class="badge bg-success rounded-pill">3</span>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <strong>S&P 500 Close Price</strong><br>
+                                            <small class="text-muted">r=0.144, p<0.001 - Market level indicator</small>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3" style="color: var(--columbia-dark);">Research Implications:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Depression index shows measurable impact on market volatility
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    7.54% of price volatility variance explained by depression levels
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    All top correlations pass Bonferroni correction (p<0.05)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Consistent patterns across 551 daily observations (2017-2024)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Portfolio includes 498 stocks across 12 industries
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Cards -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <h5 class="fw-semibold" style="color: var(--columbia-dark);">Explore Detailed Analysis:</h5>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="/timeseries-analysis" class="text-decoration-none">
+                <div class="card hover-lift h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-chart-line fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                        <h6 class="fw-semibold">Time Series Analysis</h6>
+                        <p class="small text-muted mb-0">Temporal trends & correlations</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="/industry-impact" class="text-decoration-none">
+                <div class="card hover-lift h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-industry fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                        <h6 class="fw-semibold">Industry Impact</h6>
+                        <p class="small text-muted mb-0">Sector-wise analysis</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="/lag-volatility-analysis" class="text-decoration-none">
+                <div class="card hover-lift h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-wave-square fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                        <h6 class="fw-semibold">Lag Analysis</h6>
+                        <p class="small text-muted mb-0">1/2/3 day lag effects</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="/" class="text-decoration-none">
+                <div class="card hover-lift h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-home fa-3x mb-3" style="color: var(--columbia-blue-dark);"></i>
+                        <h6 class="fw-semibold">Home Dashboard</h6>
+                        <p class="small text-muted mb-0">Return to main page</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(30, 58, 95, 0.2)!important;
+}
+</style>
+{% endblock %}

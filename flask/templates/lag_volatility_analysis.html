@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Lag Volatility Analysis - Depression & Stock Market{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" style="color: var(--columbia-blue-dark);">Home</a></li>
+                <li class="breadcrumb-item active">Lag Volatility Analysis</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-2" style="color: var(--columbia-dark);">
+            <i class="fas fa-wave-square me-2"></i>Lag Volatility Analysis
+        </h2>
+        <p class="text-muted">1/2/3 day lag effect analysis - How past depression levels affect future market volatility</p>
+    </div>
+
+    <!-- Lag Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 d-inline-block p-3 rounded-circle" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                        <i class="fas fa-1 fa-2x text-white"></i>
+                    </div>
+                    <h6 class="text-uppercase text-muted mb-2">Lag 1 Day Effect</h6>
+                    <h3 class="fw-bold mb-2" style="color: var(--columbia-dark);" id="lag1Effect">--</h3>
+                    <p class="text-muted small mb-0">Correlation coefficient</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 d-inline-block p-3 rounded-circle" style="background: linear-gradient(135deg, #B9D9EB 0%, #75A8C8 100%);">
+                        <i class="fas fa-2 fa-2x text-white"></i>
+                    </div>
+                    <h6 class="text-uppercase text-muted mb-2">Lag 2 Day Effect</h6>
+                    <h3 class="fw-bold mb-2" style="color: var(--columbia-dark);" id="lag2Effect">--</h3>
+                    <p class="text-muted small mb-0">Correlation coefficient</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 d-inline-block p-3 rounded-circle" style="background: linear-gradient(135deg, #75A8C8 0%, #5C9BB5 100%);">
+                        <i class="fas fa-3 fa-2x text-white"></i>
+                    </div>
+                    <h6 class="text-uppercase text-muted mb-2">Lag 3 Day Effect</h6>
+                    <h3 class="fw-bold mb-2" style="color: var(--columbia-dark);" id="lag3Effect">--</h3>
+                    <p class="text-muted small mb-0">Correlation coefficient</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lag Comparison Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-bar me-2"></i>Lag Effect Comparison</h5>
+                </div>
+                <div class="card-body">
+                    <div id="lagComparisonChart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volatility Time Series with Lags -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-line me-2"></i>Volatility with Depression Index Lags</h5>
+                </div>
+                <div class="card-body">
+                    <div id="lagTimeSeriesChart" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scatter Plots -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h6 class="mb-0 fw-semibold">Lag 1 Day Scatter</h6>
+                </div>
+                <div class="card-body">
+                    <div id="lag1Scatter" style="height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #B9D9EB 0%, #75A8C8 100%);">
+                    <h6 class="mb-0 fw-semibold">Lag 2 Day Scatter</h6>
+                </div>
+                <div class="card-body">
+                    <div id="lag2Scatter" style="height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #75A8C8 0%, #5C9BB5 100%);">
+                    <h6 class="mb-0 fw-semibold">Lag 3 Day Scatter</h6>
+                </div>
+                <div class="card-body">
+                    <div id="lag3Scatter" style="height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Findings -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, var(--columbia-blue-dark) 0%, var(--columbia-dark) 100%);">
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-clipboard-list me-2"></i>Key Findings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3" style="color: var(--columbia-dark);">Lag Effects:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-arrow-right me-2" style="color: var(--columbia-blue-dark);"></i>
+                                    <strong>Lag 1:</strong> Immediate next-day effect on volatility
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-arrow-right me-2" style="color: var(--columbia-blue-dark);"></i>
+                                    <strong>Lag 2:</strong> Two-day delayed impact on market behavior
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-arrow-right me-2" style="color: var(--columbia-blue-dark);"></i>
+                                    <strong>Lag 3:</strong> Extended three-day correlation pattern
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3" style="color: var(--columbia-dark);">Interpretation:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-lightbulb me-2 text-warning"></i>
+                                    Higher depression levels today may predict increased volatility tomorrow
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-lightbulb me-2 text-warning"></i>
+                                    Multi-day lag analysis reveals persistent market effects
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-lightbulb me-2 text-warning"></i>
+                                    Useful for short-term volatility forecasting models
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadLagAnalysis();
+});
+
+function calculateCorrelation(x, y) {
+    const n = Math.min(x.length, y.length);
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+    
+    for (let i = 0; i < n; i++) {
+        sumX += x[i];
+        sumY += y[i];
+        sumXY += x[i] * y[i];
+        sumX2 += x[i] * x[i];
+        sumY2 += y[i] * y[i];
+    }
+    
+    const numerator = (n * sumXY) - (sumX * sumY);
+    const denominator = Math.sqrt(((n * sumX2) - (sumX * sumX)) * ((n * sumY2) - (sumY * sumY)));
+    
+    return denominator !== 0 ? numerator / denominator : 0;
+}
+
+function loadLagAnalysis() {
+    fetch('/api/timeseries-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('API Error:', data.error);
+                return;
+            }
+            
+            // Calculate lag correlations
+            const depression = data.depression_index;
+            const volatility = data.volatility;
+            
+            // Lag 1: depression[t] vs volatility[t+1]
+            const lag1Corr = calculateCorrelation(
+                depression.slice(0, -1),
+                volatility.slice(1)
+            );
+            
+            // Lag 2: depression[t] vs volatility[t+2]
+            const lag2Corr = calculateCorrelation(
+                depression.slice(0, -2),
+                volatility.slice(2)
+            );
+            
+            // Lag 3: depression[t] vs volatility[t+3]
+            const lag3Corr = calculateCorrelation(
+                depression.slice(0, -3),
+                volatility.slice(3)
+            );
+            
+            // Update summary cards
+            document.getElementById('lag1Effect').textContent = lag1Corr.toFixed(4);
+            document.getElementById('lag2Effect').textContent = lag2Corr.toFixed(4);
+            document.getElementById('lag3Effect').textContent = lag3Corr.toFixed(4);
+            
+            // Lag Comparison Bar Chart
+            const lagTrace = {
+                x: ['Lag 1 Day', 'Lag 2 Days', 'Lag 3 Days'],
+                y: [lag1Corr, lag2Corr, lag3Corr],
+                type: 'bar',
+                marker: {
+                    color: ['#75A8C8', '#B9D9EB', '#5C9BB5'],
+                    line: { color: 'white', width: 2 }
+                }
+            };
+            
+            const lagLayout = {
+                title: '',
+                xaxis: { title: 'Lag Period' },
+                yaxis: { title: 'Correlation Coefficient', gridcolor: '#e8f4f8' },
+                margin: { t: 20, r: 20, l: 60, b: 80 },
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' }
+            };
+            
+            Plotly.newPlot('lagComparisonChart', [lagTrace], lagLayout, {responsive: true});
+            
+            // Time Series with Lags
+            const dates = data.dates;
+            
+            const trace1 = {
+                x: dates,
+                y: depression,
+                name: 'Depression Index',
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#75A8C8', width: 2 },
+                yaxis: 'y'
+            };
+            
+            const trace2 = {
+                x: dates,
+                y: volatility,
+                name: 'Volatility',
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#dc3545', width: 2 },
+                yaxis: 'y2'
+            };
+            
+            const tsLayout = {
+                title: '',
+                xaxis: { title: 'Date', gridcolor: '#e8f4f8' },
+                yaxis: {
+                    title: 'Depression Index',
+                    titlefont: { color: '#75A8C8' },
+                    tickfont: { color: '#75A8C8' },
+                    gridcolor: '#e8f4f8'
+                },
+                yaxis2: {
+                    title: 'Volatility',
+                    titlefont: { color: '#dc3545' },
+                    tickfont: { color: '#dc3545' },
+                    overlaying: 'y',
+                    side: 'right'
+                },
+                margin: { t: 20, r: 80, l: 60, b: 60 },
+                hovermode: 'x unified',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670' },
+                legend: { x: 0.02, y: 0.98 }
+            };
+            
+            Plotly.newPlot('lagTimeSeriesChart', [trace1, trace2], tsLayout, {responsive: true});
+            
+            // Scatter plots for each lag
+            const scatterLayout = {
+                xaxis: { title: 'Depression Index (t)', gridcolor: '#e8f4f8' },
+                yaxis: { title: 'Volatility (t+lag)', gridcolor: '#e8f4f8' },
+                margin: { t: 10, r: 20, l: 60, b: 60 },
+                hovermode: 'closest',
+                plot_bgcolor: '#f5f9fc',
+                paper_bgcolor: 'white',
+                font: { family: 'Inter, system-ui, sans-serif', color: '#5C6670', size: 10 }
+            };
+            
+            // Lag 1 Scatter
+            Plotly.newPlot('lag1Scatter', [{
+                x: depression.slice(0, -1),
+                y: volatility.slice(1),
+                mode: 'markers',
+                type: 'scatter',
+                marker: { size: 4, color: '#75A8C8', opacity: 0.6 }
+            }], scatterLayout, {responsive: true});
+            
+            // Lag 2 Scatter
+            Plotly.newPlot('lag2Scatter', [{
+                x: depression.slice(0, -2),
+                y: volatility.slice(2),
+                mode: 'markers',
+                type: 'scatter',
+                marker: { size: 4, color: '#B9D9EB', opacity: 0.6 }
+            }], scatterLayout, {responsive: true});
+            
+            // Lag 3 Scatter
+            Plotly.newPlot('lag3Scatter', [{
+                x: depression.slice(0, -3),
+                y: volatility.slice(3),
+                mode: 'markers',
+                type: 'scatter',
+                marker: { size: 4, color: '#5C9BB5', opacity: 0.6 }
+            }], scatterLayout, {responsive: true});
+        })
+        .catch(error => {
+            console.error('Error loading lag analysis:', error);
+        });
+}
+</script>
+{% endblock %}

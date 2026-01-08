@@ -1,0 +1,41 @@
+================================================================================
+TIME SERIES ANALYSIS SUMMARY REPORT
+Depression Data, Stock Market, and Environmental Factors
+================================================================================
+
+Generated: 2025-11-22 07:24:19
+
+Data Range: 2017-01-01 00:00:00 to 2018-07-05 00:00:00
+Total Records: 551
+
+--------------------------------------------------------------------------------
+KEY FINDINGS:
+--------------------------------------------------------------------------------
+
+1. S&P 500 vs Depression Index Correlation: 0.1436
+2. Trading Volume vs Depression Word Count Correlation: 0.0191
+
+--------------------------------------------------------------------------------
+STOCK PERFORMANCE BY DEPRESSION LEVEL:
+--------------------------------------------------------------------------------
+                             Return  Volatility_7      close
+depression_index_category                                   
+Low                       -0.000903      0.004364  85.154895
+Medium                     0.000991      0.004274  84.213774
+High                       0.000801      0.006462  84.178711
+Very High                  0.000443      0.003994  84.891289
+
+--------------------------------------------------------------------------------
+TOP PERFORMING INDUSTRIES:
+--------------------------------------------------------------------------------
+industry
+Heavy Electrical Equipment                      14.130435
+Specialized Consumer Services                    4.126371
+Personal Care Products                           1.806956
+Human Resource & Employment Services             1.765658
+Industrial Machinery & Supplies & Components     0.891623
+Electric Utilities                               0.703547
+Broadcasting                                     0.518564
+Oil & Gas Exploration & Production               0.418540
+Environmental & Facilities Services              0.360434
+Hotel & Resort REITs                             0.183548

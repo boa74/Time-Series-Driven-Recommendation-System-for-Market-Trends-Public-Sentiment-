@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Database Schema Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-primary mb-4">
+                <i class="fas fa-database"></i> Database Schema Manager
+            </h2>
+            
+            <!-- Schema Overview Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-table"></i> Time Series Schema
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Complete schema for time series analysis with correlation results</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check-circle text-success"></i> 7 Tables</li>
+                                <li><i class="fas fa-check-circle text-success"></i> 4 Views</li>
+                                <li><i class="fas fa-check-circle text-success"></i> 2 Functions</li>
+                                <li><i class="fas fa-check-circle text-success"></i> Analysis Ready</li>
+                            </ul>
+                            <button class="btn btn-primary btn-sm" onclick="executeSchema('timeseries')">
+                                Deploy Schema
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-sitemap"></i> Normalized Schema
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Normalized relational database structure with dimension tables</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check-circle text-success"></i> 6 Tables</li>
+                                <li><i class="fas fa-check-circle text-success"></i> 2 Views</li>
+                                <li><i class="fas fa-check-circle text-success"></i> Foreign Keys</li>
+                                <li><i class="fas fa-check-circle text-success"></i> Date Dimension</li>
+                            </ul>
+                            <button class="btn btn-info btn-sm" onclick="executeSchema('normalized')">
+                                Deploy Schema
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-upload"></i> Load Data
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Load CSV data into PostgreSQL tables after schema creation</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-file-csv"></i> Stock Data</li>
+                                <li><i class="fas fa-file-csv"></i> Depression Data</li>
+                                <li><i class="fas fa-file-csv"></i> Correlation Results</li>
+                                <li><i class="fas fa-file-csv"></i> Merged Data</li>
+                            </ul>
+                            <button class="btn btn-success btn-sm" onclick="loadData()">
+                                Load Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schema Execution Area -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-code"></i> Schema Execution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <label for="schemaType">Select Schema Type:</label>
+                        <select class="form-control" id="schemaType">
+                            <option value="">-- Select Schema --</option>
+                            <option value="timeseries">Time Series Analysis Schema (Recommended)</option>
+                            <option value="normalized">Normalized Relational Schema</option>
+                            <option value="custom">Custom SQL Command</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="sqlCommand">SQL Command Preview:</label>
+                        <textarea class="form-control" id="sqlCommand" rows="10" readonly>
+-- Select a schema type above to see the SQL commands
+                        </textarea>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="executeSchemaCommand()">
+                            <i class="fas fa-play"></i> Execute Schema
+                        </button>
+                        <button class="btn btn-secondary" onclick="previewSchema()">
+                            <i class="fas fa-eye"></i> Preview Only
+                        </button>
+                        <button class="btn btn-warning" onclick="dropAllTables()">
+                            <i class="fas fa-trash"></i> Drop All Tables
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Database Table Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-outline-primary mb-3" onclick="getTableInfo()">
+                        <i class="fas fa-refresh"></i> Refresh Table Info
+                    </button>
+                    <div id="tableInfoResult">
+                        <p class="text-muted">Click "Refresh Table Info" to see current database tables</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Area -->
+            <div class="card" id="resultsCard" style="display: none;">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-check-circle text-success"></i> Execution Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const schemaCommands = {
+    timeseries: `-- Time Series Analysis Schema
+-- Creates complete schema for stock-depression correlation analysis
+-- Tables: stock_data, sp500_data, depression_index, depression_word_count, rainfall_data, daily_merged_data, correlation_statistics
+-- Includes views, indexes, and analysis functions
+
+CREATE TABLE IF NOT EXISTS stock_data (
+    stock_id SERIAL PRIMARY KEY,
+    date DATE NOT NULL,
+    ticker VARCHAR(10) NOT NULL,
+    industry VARCHAR(100),
+    open_price NUMERIC(12, 4),
+    high_price NUMERIC(12, 4),
+    low_price NUMERIC(12, 4),
+    close_price NUMERIC(12, 4),
+    volume BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT stock_date_ticker_unique UNIQUE (date, ticker)
+);
+
+-- Additional tables and indexes will be created...`,
+
+    normalized: `-- Normalized Relational Schema
+-- Creates normalized database structure with dimension and fact tables
+-- Includes date_dimension, company_info, and proper foreign key relationships
+
+CREATE TABLE IF NOT EXISTS date_dimension (
+    date DATE PRIMARY KEY,
+    year INTEGER NOT NULL,
+    month INTEGER NOT NULL,
+    day INTEGER NOT NULL,
+    quarter INTEGER NOT NULL,
+    day_of_week INTEGER NOT NULL,
+    day_name VARCHAR(10),
+    month_name VARCHAR(10),
+    is_weekend BOOLEAN
+);
+
+-- Additional normalized tables will be created...`
+};
+
+function executeSchema(type) {
+    document.getElementById('schemaType').value = type;
+    previewSchema();
+}
+
+function previewSchema() {
+    const schemaType = document.getElementById('schemaType').value;
+    const sqlCommand = document.getElementById('sqlCommand');
+    
+    if (schemaType && schemaCommands[schemaType]) {
+        sqlCommand.value = schemaCommands[schemaType];
+    } else if (schemaType === 'custom') {
+        sqlCommand.value = '-- Enter your custom SQL commands here\n\n';
+        sqlCommand.readOnly = false;
+    } else {
+        sqlCommand.value = '-- Select a schema type above to see the SQL commands';
+        sqlCommand.readOnly = true;
+    }
+}
+
+function executeSchemaCommand() {
+    const schemaType = document.getElementById('schemaType').value;
+    
+    if (!schemaType) {
+        alert('Please select a schema type first');
+        return;
+    }
+    
+    showResults('Executing schema creation...', 'info');
+    
+    const endpoint = schemaType === 'timeseries' ? '/execute_timeseries_schema' : 
+                     schemaType === 'normalized' ? '/execute_normalized_schema' : 
+                     '/execute_custom_schema';
+    
+    const requestBody = schemaType === 'custom' ? 
+        { sql: document.getElementById('sqlCommand').value } : {};
+    
+    fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showResults(`Schema created successfully!<br><br>
+                <strong>Details:</strong><br>
+                ${data.message || 'Schema deployment completed.'}<br><br>
+                <strong>Next Steps:</strong><br>
+                1. Load data using the "Load Data" button<br>
+                2. Use the PostgreSQL Query interface to run analysis<br>
+                3. Check the Views for pre-built analysis queries`, 'success');
+        } else {
+            showResults(`Error: ${data.error}`, 'danger');
+        }
+    })
+    .catch(error => {
+        showResults(`Network Error: ${error.message}`, 'danger');
+    });
+}
+
+function loadData() {
+    showResults('Loading data from CSV files...', 'info');
+    
+    fetch('/load_csv_data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showResults(`Data loaded successfully!<br><br>
+                <strong>Loaded Tables:</strong><br>
+                ${data.tables_loaded ? data.tables_loaded.join(', ') : 'All tables'}<br><br>
+                <strong>Total Rows:</strong> ${data.total_rows || 'Unknown'}`, 'success');
+        } else {
+            showResults(`Error loading data: ${data.error}`, 'danger');
+        }
+    })
+    .catch(error => {
+        showResults(`Network Error: ${error.message}`, 'danger');
+    });
+}
+
+function dropAllTables() {
+    if (!confirm('⚠️ This will DELETE ALL TABLES and DATA. Are you sure?')) {
+        return;
+    }
+    
+    showResults('Dropping all tables...', 'warning');
+    
+    fetch('/drop_all_tables', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showResults('All tables dropped successfully!', 'warning');
+        } else {
+            showResults(`Error: ${data.error}`, 'danger');
+        }
+    })
+    .catch(error => {
+        showResults(`Network Error: ${error.message}`, 'danger');
+    });
+}
+
+function getTableInfo() {
+    fetch('/get_table_info', {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let html = '<div class="table-responsive"><table class="table table-striped">';
+            html += '<thead><tr><th>Table Name</th><th>Row Count</th><th>Columns</th><th>Size</th></tr></thead><tbody>';
+            
+            if (data.tables && data.tables.length > 0) {
+                data.tables.forEach(table => {
+                    html += `<tr>
+                        <td><strong>${table.table_name}</strong></td>
+                        <td>${table.row_count || 'N/A'}</td>
+                        <td>${table.column_count || 'N/A'}</td>
+                        <td>${table.size || 'N/A'}</td>
+                    </tr>`;
+                });
+            } else {
+                html += '<tr><td colspan="4" class="text-center text-muted">No tables found</td></tr>';
+            }
+            
+            html += '</tbody></table></div>';
+            document.getElementById('tableInfoResult').innerHTML = html;
+        } else {
+            document.getElementById('tableInfoResult').innerHTML = 
+                `<div class="alert alert-danger">Error: ${data.error}</div>`;
+        }
+    })
+    .catch(error => {
+        document.getElementById('tableInfoResult').innerHTML = 
+            `<div class="alert alert-danger">Network Error: ${error.message}</div>`;
+    });
+}
+
+function showResults(message, type) {
+    const resultsCard = document.getElementById('resultsCard');
+    const results = document.getElementById('results');
+    
+    results.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+    resultsCard.style.display = 'block';
+    resultsCard.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Initialize
+document.getElementById('schemaType').addEventListener('change', previewSchema);
+</script>
+{% endblock %}
