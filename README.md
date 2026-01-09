@@ -1,4 +1,4 @@
-# 📊 Fundamentals of Data Engineering - Depression Index & Stock Market Analysis
+# 📊 Time-Series-Driven-Recommendation-System-for-Market-Trends-Public-Sentiment-
 
 > **Comprehensive Time Series Analysis Platform**  
 > Depression sentiment indicators vs. stock market performance (2017-2024)
